@@ -78,6 +78,10 @@
     <ClCompile Include="..\..\src\shared\Database\SqlPreparedStatement.cpp">
       <Filter>Database</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\shared\vmap\MapTree.cpp" />
+    <ClCompile Include="..\..\src\shared\vmap\ModelInstance.cpp" />
+    <ClCompile Include="..\..\src\shared\vmap\VMapManager2.cpp" />
+    <ClCompile Include="..\..\src\shared\vmap\WorldModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\shared\Database\Database.h">
@@ -173,6 +177,10 @@
     <ClInclude Include="..\..\src\shared\Database\SqlPreparedStatement.h">
       <Filter>Database</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\shared\vmap\MapTree.h" />
+    <ClInclude Include="..\..\src\shared\vmap\ModelInstance.h" />
+    <ClInclude Include="..\..\src\shared\vmap\VMapManager2.h" />
+    <ClInclude Include="..\..\src\shared\vmap\WorldModel.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\src\shared\revision.h" />

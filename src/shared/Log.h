@@ -51,9 +51,10 @@ enum LogFilters
     LOG_FILTER_COMBAT             = 0x0800,                 // attack states/roll attack results/etc
     LOG_FILTER_SPELL_CAST         = 0x1000,                 // spell cast/aura apply/spell proc events
     LOG_FILTER_DB_STRICTED_CHECK  = 0x2000,                 // stricted DB data checks output (with possible false reports) for DB devs
+    LOG_FILTER_PATHFINDING        = 0x4000,                 // pathfinding
 };
 
-#define LOG_FILTER_COUNT            14
+#define LOG_FILTER_COUNT            15
 
 struct LogFilterData
 {
