@@ -493,8 +493,8 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
 
                     switch (m_spellInfo->Id)
                     {
-                        case 12850: damage *= 0.2f; break;
-                        case 12162: damage *= 0.4f; break;
+                        case 12162: damage *= 0.2f; break;
+                        case 12850: damage *= 0.4f; break;
                         case 12868: damage *= 0.6f; break;
                         default:
                             sLog.outError("Spell::EffectDummy: Spell %u not handled in DW",m_spellInfo->Id);
