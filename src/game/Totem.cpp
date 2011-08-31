@@ -45,16 +45,16 @@ bool Totem::Create(uint32 guidlow, CreatureCreatePos& cPos, CreatureInfo const* 
 
     cPos.SelectFinalPoint(this);
 
-    // totem must be at same Z in case swimming caster and etc.
+    // Totem must be at same Z in case swimming caster and etc.
     if (fabs(cPos.m_pos.z - owner->GetPositionZ() ) > 5.0f)
         cPos.m_pos.z = owner->GetPositionZ();
 
     if (!cPos.Relocate(this))
         return false;
 
-    //Notify the map's instance data.
-    //Only works if you create the object in it, not if it is moves to that map.
-    //Normally non-players do not teleport to other maps.
+    // Notify the map's instance data.
+    // Only works if you create the object in it, not if it is moves to that map.
+    // Normally non-players do not teleport to other maps.
     if (InstanceData* iData = GetMap()->GetInstanceData())
         iData->OnCreatureCreate(this);
 
@@ -102,12 +102,10 @@ void Totem::Summon(Unit* owner)
     switch(m_type)
     {
         case TOTEM_PASSIVE:
+        {
             CastSpell(this, GetSpell(), true);
             break;
-        case TOTEM_STATUE:
-            CastSpell(GetOwner(), GetSpell(), true);
-            break;
-        default: break;
+        }
     }
 }
 
@@ -123,16 +121,16 @@ void Totem::UnSummon()
         owner->_RemoveTotem(this);
         owner->RemoveAurasDueToSpell(GetSpell());
 
-        //remove aura all party members too
+        // Remove aura all party members too
         if (owner->GetTypeId() == TYPEID_PLAYER)
         {
             // Not only the player can summon the totem (scripted AI)
             if (Group *pGroup = ((Player*)owner)->GetGroup())
             {
-                for(GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
+                for (GroupReference *itr = pGroup->GetFirstMember(); itr != NULL; itr = itr->next())
                 {
                     Player* Target = itr->getSource();
-                    if(Target && pGroup->SameSubGroup((Player*)owner, Target))
+                    if (Target && pGroup->SameSubGroup((Player*)owner, Target))
                         Target->RemoveAurasDueToSpell(GetSpell());
                 }
             }
@@ -142,7 +140,7 @@ void Totem::UnSummon()
             ((Creature*)owner)->AI()->SummonedCreatureDespawn((Creature*)this);
     }
 
-    // any totem unsummon look like as totem kill, req. for proper animation
+    // Any totem unsummon look like as totem kill, req. for proper animation
     if (isAlive())
         SetDeathState(DEAD);
 
@@ -175,8 +173,6 @@ void Totem::SetTypeBySummonSpell(SpellEntry const * spellProto)
         if (GetSpellCastTime(totemSpell))
             m_type = TOTEM_ACTIVE;
     }
-    if(spellProto->SpellIconID == 2056)
-        m_type = TOTEM_STATUE;                              //Jewelery statue
 }
 
 bool Totem::IsImmuneToSpellEffect(SpellEntry const* spellInfo, SpellEffectIndex index) const
