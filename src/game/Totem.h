@@ -25,8 +25,7 @@
 enum TotemType
 {
     TOTEM_PASSIVE    = 0,
-    TOTEM_ACTIVE     = 1,
-    TOTEM_STATUE     = 2
+    TOTEM_ACTIVE     = 1
 };
 
 class Totem : public Creature
