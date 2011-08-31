@@ -1072,7 +1072,6 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
             break;
         case SPELLFAMILY_ROGUE:
             break;
-        }
         case SPELLFAMILY_HUNTER:
         {
             switch(m_spellInfo->Id)
