@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
- * Copyright (C) 2009-2011 MaNGOSZero <https://github.com/mangos/zero>
+ * Copyright (C) 2009-2011 MaNGOSZero <https://github.com/mangos-zero>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@
 
 char remotes[NUM_REMOTES][MAX_REMOTE] = {
     "git@github.com:mangos/zero.git",
-    "git://github.com/mangos/zero.git"                      // used for fetch if present
+    "git://github.com/mangos-zero.git"                      // used for fetch if present
 };
 
 char remote_branch[MAX_REMOTE] = "master";
