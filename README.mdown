@@ -1,0 +1,68 @@
+mangos-zero ![Project status](http://getmangos.com/assets/img/repository-status-maintained.png)
+===========
+*mangos-zero* is a full featured server, including authentication, client updates,
+and world content serving compatible with the classic [World of Warcaft][50]
+experience for *World of Warcraft Client Patch 1.12* - [_Drums of War_][51].
+
+**mangos-zero** is released under the GPL v2.  The file (`LICENSE.mdown`) **must**
+be a part of any redistributable packages made from this software.  No licenses
+should be removed from this software if you are making redistributable copies.
+
+
+Compatibility
+-------------
+*mangos-zero* is compatible with [scriptdev0 revision 464][11], and the game
+[content database 2011-08-31][12], and newer revisions.
+
+
+And if something goes wrong?
+----------------------------
+_If_ you feel like submitting an issue, please do so *only* if you are willing
+to provide a detailed report, and are available to verify any solution to the
+issue provided by the developers of this repository.
+
+
+Credits
+-------
+MaNGOS has originally been written by Team Python and WoW Daemon Team. Many
+people further contributed to MaNGOS by reporting problems, suggesting various
+improvements or submitting actual code.
+
+Special thanks should also go out to the WowwoW team. We have gained help from
+them many times in the creation of this project.
+
+Thanks should also go out to the Ludmilla team, who are also providing the
+community with a great server. We have not gained too much help from them,
+but we have recieved some.
+
+
+Warning
+-------
+The Massive Network Game Object Server (MaNGOS) has been built with education
+as the main purpose and the MaNGOS team would like to keep it that way.
+
+Since any public and/or commercial use of this software is considered illegal
+in many countries (please refer to your local law), the MaNGOS team will not
+provide any help nor support with such usage in any way.  Every user of this
+software is encouraged to make sure no law is being broken on his/her side.
+
+Both the MaNGOS team and MaNGOS foundation will not take any responsibility
+for any kind of usage of this software by the end users.
+
+
+[1]: https://github.com/mangos-zero "mangos-zero"
+
+[10]: https://github.com/mangos-zero/server "mangos zero"
+[11]: https://github.com/mangos-zero/scriptdev0 "script bindings"
+[12]: https://github.com/mangos-zero/database "content database"
+
+[20]: https://github.com/mangos/mangos "mangos"
+[21]: https://github.com/scriptdev2/scriptdev2 "script bindings (scriptdev2)"
+
+[50]: http://eu.blizzard.com/en-gb/games/wow/ "World of Warcraft"
+[51]: http://www.wowpedia.org/Patch_1.12.0 "WoW 1.12.0 - Drums of War"
+
+[101]: http://github.com/ "github - social coding"
+
+[110]: http://nvie.com/posts/a-successful-git-branching-model/ "git flow extension"
+[111]: http://yakiloo.com/getting-started-git-flow/ "git flow workflow"
