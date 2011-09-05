@@ -426,7 +426,7 @@ int WMOGroup::ConvertLiquidType(int hlqLiquid, std::string &filename)
     filename = filename.substr(0, filename.find_last_of("\\"));     // trim filename
     filename = filename.substr(filename.find_last_of("\\") + 1);    // trim everything except current wmo path part
 
-    if (hlqLiquid == 3 && filename == "AZ_Blackrock")               // lava in Molten Cire
+    if (hlqLiquid == 3 && filename == "AZ_Blackrock")               // lava in Molten Core
         return 2;
     else if (filename == "KL_OrgrimmarLavaDungeon")                 // lava in Ragefire Chasm
         return 2;
