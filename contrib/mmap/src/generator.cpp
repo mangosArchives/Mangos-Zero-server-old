@@ -231,7 +231,7 @@ int main(int argc, char** argv)
     bool skipLiquid = false,
          skipContinents = false,
          skipJunkMaps = true,
-         skipBattlegrounds = true,
+         skipBattlegrounds = false,
          debugOutput = false,
          silent = false,
          bigBaseUnit = false;

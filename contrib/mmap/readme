@@ -33,7 +33,7 @@ Generator command line args
 
 --skipBattlegrounds [true|false]    does not include PVP arenas
 
-                                    true: skip battlegrounds (default)
+                                    false: skip battlegrounds (default)
 
 --debugOutput       [true|false]    create debugging files for use with RecastDemo
                                     if you are only creating mmaps for use with MaNGOS,

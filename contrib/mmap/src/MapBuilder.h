@@ -65,7 +65,7 @@ namespace MMAP
                        bool skipLiquid          = false,
                        bool skipContinents      = false,
                        bool skipJunkMaps        = true,
-                       bool skipBattlegrounds   = true,
+                       bool skipBattlegrounds   = false,
                        bool debugOutput         = false,
                        bool bigBaseUnit         = false,
                        const char* offMeshFilePath = NULL);
