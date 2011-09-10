@@ -421,11 +421,11 @@ namespace MMAP
         config.maxEdgeLen = VERTEX_PER_TILE + 1;        //anything bigger than tileSize
         config.walkableHeight = m_bigBaseUnit ? 3 : 6;
         config.walkableClimb = m_bigBaseUnit ? 2 : 4;   // keep less than walkableHeight
-        config.minRegionArea = rcSqr(50);
-        config.mergeRegionArea = rcSqr(40);
-        config.maxSimplificationError = 3.0f;       // eliminates most jagged edges (tinny polygons)
+        config.minRegionArea = rcSqr(60);
+        config.mergeRegionArea = rcSqr(50);
+        config.maxSimplificationError = 2.0f;       // eliminates most jagged edges (tinny polygons)
         config.detailSampleDist = config.cs * 64;
-        config.detailSampleMaxError = config.ch * 4;
+        config.detailSampleMaxError = config.ch * 2;
 
         // this sets the dimensions of the heightfield - should maybe happen before border padding
         rcCalcGridSize(config.bmin, config.bmax, config.cs, &config.width, &config.height);
