@@ -21,6 +21,7 @@
 
 #include "ChunkyTriMesh.h"
 #include "MeshLoaderObj.h"
+#include "Debug.h"
 
 static const int MAX_CONVEXVOL_PTS = 12;
 struct ConvexVolume
@@ -34,7 +35,7 @@ struct ConvexVolume
 class InputGeom
 {
 	rcChunkyTriMesh* m_chunkyMesh;
-	rcMeshLoaderObj* m_mesh;
+	myMeshLoaderObj* m_mesh;
 	float m_meshBMin[3], m_meshBMax[3];
 	
 	// Off-Mesh connections.
@@ -62,7 +63,7 @@ public:
 	bool save(const char* filepath);
 	
 	// Method to return static mesh data.
-	inline const rcMeshLoaderObj* getMesh() const { return m_mesh; }
+	inline const myMeshLoaderObj* getMesh() const { return m_mesh; }
 	inline const float* getMeshBoundsMin() const { return m_meshBMin; }
 	inline const float* getMeshBoundsMax() const { return m_meshBMax; }
 	inline const rcChunkyTriMesh* getChunkyMesh() const { return m_chunkyMesh; }

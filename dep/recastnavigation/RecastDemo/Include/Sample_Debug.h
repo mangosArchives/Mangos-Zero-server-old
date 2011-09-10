@@ -19,39 +19,52 @@
 #ifndef RECASTSAMPLEDEBUG_H
 #define RECASTSAMPLEDEBUG_H
 
-#include "Sample.h"
+#include "Sample_SoloMeshTiled.h"
 #include "DetourNavMesh.h"
 #include "Recast.h"
 
 // Sample used for random debugging.
-class Sample_Debug : public Sample
+class Sample_Debug : public Sample_SoloMeshTiled
 {
-protected:
-	rcCompactHeightfield* m_chf;
-	rcContourSet* m_cset;
-	rcPolyMesh* m_pmesh;
+    protected:
+        int m_hfCount;
+        rcHeightfield* m_hf;
 
-	float m_ext[3];
-	float m_center[3];
-	float m_bmin[3], m_bmax[3];
-	dtPolyRef m_ref;
-	
-public:
-	Sample_Debug();
-	virtual ~Sample_Debug();
-	
-	virtual void handleSettings();
-	virtual void handleTools();
-	virtual void handleDebugMode();
-	virtual void handleClick(const float* s, const float* p, bool shift);
-	virtual void handleToggle();
-	virtual void handleRender();
-	virtual void handleRenderOverlay(double* proj, double* model, int* view);
-	virtual void handleMeshChanged(class InputGeom* geom);
-	virtual bool handleBuild();
+        int m_chfCount;
+        rcCompactHeightfield* m_chf;
+        rcContourSet* m_cset;
 
-	virtual const float* getBoundsMin();
-	virtual const float* getBoundsMax();
+        int m_csetCount;
+
+        int m_pmeshCount;
+        rcPolyMesh* m_pmeshes;
+
+        int m_dmeshCount;
+        rcPolyMeshDetail* m_dmeshes;
+
+        float m_ext[3];
+        float m_center[3];
+        float m_bmin[3], m_bmax[3];
+        dtPolyRef m_ref;
+
+    public:
+        virtual void cleanup();
+        Sample_Debug();
+        virtual ~Sample_Debug();
+
+        virtual void handleSettings();
+        virtual void handleTools();
+        virtual void handleDebugMode();
+        virtual void handleClick(const float* p, bool shift);
+        virtual void handleToggle();
+        virtual void handleRender();
+        virtual void handleRenderOverlay(double* proj, double* model, int* view);
+        virtual void handleMeshChanged(class InputGeom* geom);
+        virtual bool handleBuild();
+        virtual void setHighlightedTile(const float* pos);
+
+        virtual const float* getBoundsMin();
+        virtual const float* getBoundsMax();
 };
 
 

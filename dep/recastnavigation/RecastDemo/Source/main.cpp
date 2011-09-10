@@ -52,12 +52,10 @@ Sample* createDebug() { return new Sample_Debug(); }
 
 static SampleItem g_samples[] =
 {
-	{ createSoloSimple, "Solo Mesh Simple" },
 	{ createSoloTiled, "Solo Mesh Tiled" },
-	{ createTile, "Tile Mesh" },
 	{ createDebug, "Debug" },
 };
-static const int g_nsamples = sizeof(g_samples)/sizeof(SampleItem); 
+static const int g_nsamples = sizeof(g_samples)/sizeof(SampleItem);
 
 
 int main(int /*argc*/, char** /*argv*/)
@@ -68,7 +66,7 @@ int main(int /*argc*/, char** /*argv*/)
 		printf("Could not initialise SDL\n");
 		return -1;
 	}
-	
+
 	// Init OpenGL
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -76,14 +74,14 @@ int main(int /*argc*/, char** /*argv*/)
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-	
+
 	const SDL_VideoInfo* vi = SDL_GetVideoInfo();
 
 	bool presentationMode = false;
 
 	int width, height;
 	SDL_Surface* screen = 0;
-	
+
 	if (presentationMode)
 	{
 		width = vi->current_w;
@@ -91,27 +89,27 @@ int main(int /*argc*/, char** /*argv*/)
 		screen = SDL_SetVideoMode(width, height, 0, SDL_OPENGL|SDL_FULLSCREEN);
 	}
 	else
-	{	
+	{
 		width = vi->current_w - 20;
 		height = vi->current_h - 80;
 		screen = SDL_SetVideoMode(width, height, 0, SDL_OPENGL);
 	}
-	
+
 	if (!screen)
 	{
 		printf("Could not initialise SDL opengl\n");
 		return -1;
 	}
-	
+
 	SDL_WM_SetCaption("Recast Demo", 0);
-	
+
 	if (!imguiRenderGLInit("DroidSans.ttf"))
 	{
 		printf("Could not init GUI renderer.\n");
 		SDL_Quit();
 		return -1;
 	}
-	
+
 	float t = 0.0f;
 	float timeAcc = 0.0f;
 	Uint32 lastTime = SDL_GetTicks();
@@ -125,12 +123,13 @@ int main(int /*argc*/, char** /*argv*/)
 	float scrollZoom = 0;
 	bool rotate = false;
 	bool movedDuringRotate = false;
-	float rays[3], raye[3]; 
+	float rays[3], raye[3];
 	bool mouseOverMenu = false;
 	bool showMenu = !presentationMode;
 	bool showLog = false;
 	bool showDebugMode = true;
 	bool showTools = true;
+	bool showMaps = false;
 	bool showLevels = false;
 	bool showSample = false;
 	bool showTestCases = false;
@@ -139,38 +138,41 @@ int main(int /*argc*/, char** /*argv*/)
 	int logScroll = 0;
 	int toolsScroll = 0;
 	int debugScroll = 0;
-	
-	char sampleName[64] = "Choose Sample..."; 
-	
+
+	char sampleName[64] = "Choose Sample...";
+
+    FileList maps;
+    char mapName[128] = "Choose Map...";
+
 	FileList files;
-	char meshName[128] = "Choose Mesh...";
-	
+	char meshName[128] = "Choose Tile...";
+
 	float mpos[3] = {0,0,0};
 	bool mposSet = false;
-	
+
 	SlideShow slideShow;
 	slideShow.init("slides/");
-	
+
 	InputGeom* geom = 0;
 	Sample* sample = 0;
 	TestCase* test = 0;
 
 	BuildContext ctx;
-	
+
 	glEnable(GL_CULL_FACE);
-	
+
 	float fogCol[4] = { 0.32f,0.25f,0.25f,1 };
 	glEnable(GL_FOG);
 	glFogi(GL_FOG_MODE, GL_LINEAR);
 	glFogf(GL_FOG_START, camr*0.2f);
 	glFogf(GL_FOG_END, camr*1.25f);
 	glFogfv(GL_FOG_COLOR, fogCol);
-	
+
 	glDepthFunc(GL_LEQUAL);
-	
+
 	glEnable(GL_POINT_SMOOTH);
 	glEnable(GL_LINE_SMOOTH);
-	
+
 	bool done = false;
 	while(!done)
 	{
@@ -179,7 +181,7 @@ int main(int /*argc*/, char** /*argv*/)
 		bool processHitTest = false;
 		bool processHitTestShift = false;
 		SDL_Event event;
-		
+
 		while (SDL_PollEvent(&event))
 		{
 			switch (event.type)
@@ -224,7 +226,7 @@ int main(int /*argc*/, char** /*argv*/)
 						{
 							delete geom;
 							geom = 0;
-							
+
 							showLog = true;
 							logScroll = 0;
 							ctx.dumpLog("Geom load log %s:", meshName);
@@ -233,7 +235,7 @@ int main(int /*argc*/, char** /*argv*/)
 						{
 							sample->handleMeshChanged(geom);
 						}
-							
+
 						if (geom || sample)
 						{
 							const float* bmin = 0;
@@ -274,7 +276,7 @@ int main(int /*argc*/, char** /*argv*/)
 						slideShow.prevSlide();
 					}
 					break;
-					
+
 				case SDL_MOUSEBUTTONDOWN:
 					if (event.button.button == SDL_BUTTON_RIGHT)
 					{
@@ -288,7 +290,7 @@ int main(int /*argc*/, char** /*argv*/)
 							origrx = rx;
 							origry = ry;
 						}
-					}	
+					}
 					else if (event.button.button == SDL_BUTTON_WHEELUP)
 					{
 						if (mouseOverMenu)
@@ -304,7 +306,7 @@ int main(int /*argc*/, char** /*argv*/)
 							scrollZoom += 1.0f;
 					}
 					break;
-					
+
 				case SDL_MOUSEBUTTONUP:
 					// Handle mouse clicks here.
 					if (event.button.button == SDL_BUTTON_RIGHT)
@@ -327,9 +329,9 @@ int main(int /*argc*/, char** /*argv*/)
 							processHitTestShift = (SDL_GetModState() & KMOD_SHIFT) ? true : false;
 						}
 					}
-					
+
 					break;
-					
+
 				case SDL_MOUSEMOTION:
 					mx = event.motion.x;
 					my = height-1 - event.motion.y;
@@ -343,11 +345,11 @@ int main(int /*argc*/, char** /*argv*/)
 							movedDuringRotate = true;
 					}
 					break;
-					
+
 				case SDL_QUIT:
 					done = true;
 					break;
-					
+
 				default:
 					break;
 			}
@@ -358,11 +360,11 @@ int main(int /*argc*/, char** /*argv*/)
 			mbut |= IMGUI_MBUT_LEFT;
 		if (SDL_GetMouseState(0,0) & SDL_BUTTON_RMASK)
 			mbut |= IMGUI_MBUT_RIGHT;
-		
+
 		Uint32	time = SDL_GetTicks();
 		float	dt = (time - lastTime) / 1000.0f;
 		lastTime = time;
-		
+
 		t += dt;
 
 
@@ -373,9 +375,9 @@ int main(int /*argc*/, char** /*argv*/)
 			TimeVal t0 = getPerfTime();
 			bool hit = geom->raycastMesh(rays, raye, t);
 			TimeVal t1 = getPerfTime();
-			
+
 			printf("raycast() %.4fms\n", getPerfDeltaTimeUsec(t0,t1)/1000.0f);
-			
+
 			if (hit)
 			{
 				if (SDL_GetModState() & KMOD_CTRL)
@@ -404,7 +406,7 @@ int main(int /*argc*/, char** /*argv*/)
 				}
 			}
 		}
-		
+
 		// Update sample simulation.
 		const float SIM_RATE = 20;
 		const float DELTA_TIME = 1.0f/SIM_RATE;
@@ -420,7 +422,7 @@ int main(int /*argc*/, char** /*argv*/)
 			}
 			simIter++;
 		}
- 		
+
 		// Update and render
 		glViewport(0, 0, width, height);
 		glClearColor(0.3f, 0.3f, 0.32f, 1.0f);
@@ -428,7 +430,7 @@ int main(int /*argc*/, char** /*argv*/)
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDisable(GL_TEXTURE_2D);
-		
+
 		// Render 3d
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
@@ -439,7 +441,7 @@ int main(int /*argc*/, char** /*argv*/)
 		glRotatef(rx,1,0,0);
 		glRotatef(ry,0,1,0);
 		glTranslatef(-camx, -camy, -camz);
-		
+
 		// Get hit ray position and direction.
 		GLdouble proj[16];
 		GLdouble model[16];
@@ -452,28 +454,28 @@ int main(int /*argc*/, char** /*argv*/)
 		rays[0] = (float)x; rays[1] = (float)y; rays[2] = (float)z;
 		gluUnProject(mx, my, 1.0f, model, proj, view, &x, &y, &z);
 		raye[0] = (float)x; raye[1] = (float)y; raye[2] = (float)z;
-		
+
 		// Handle keyboard movement.
 		Uint8* keystate = SDL_GetKeyState(NULL);
 		moveW = rcClamp(moveW + dt * 4 * (keystate[SDLK_w] ? 1 : -1), 0.0f, 1.0f);
 		moveS = rcClamp(moveS + dt * 4 * (keystate[SDLK_s] ? 1 : -1), 0.0f, 1.0f);
 		moveA = rcClamp(moveA + dt * 4 * (keystate[SDLK_a] ? 1 : -1), 0.0f, 1.0f);
 		moveD = rcClamp(moveD + dt * 4 * (keystate[SDLK_d] ? 1 : -1), 0.0f, 1.0f);
-		
+
 		float keybSpeed = 22.0f;
 		if (SDL_GetModState() & KMOD_SHIFT)
 			keybSpeed *= 4.0f;
-		
+
 		float movex = (moveD - moveA) * keybSpeed * dt;
 		float movey = (moveS - moveW) * keybSpeed * dt;
-		
+
 		movey += scrollZoom * 2.0f;
 		scrollZoom = 0;
-		
+
 		camx += movex * (float)model[0];
 		camy += movex * (float)model[4];
 		camz += movex * (float)model[8];
-		
+
 		camx += movey * (float)model[2];
 		camy += movey * (float)model[6];
 		camz += movey * (float)model[10];
@@ -484,9 +486,9 @@ int main(int /*argc*/, char** /*argv*/)
 			sample->handleRender();
 		if (test)
 			test->handleRender();
-		
+
 		glDisable(GL_FOG);
-		
+
 		// Render GUI
 		glDisable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
@@ -494,11 +496,11 @@ int main(int /*argc*/, char** /*argv*/)
 		gluOrtho2D(0, width, 0, height);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		
+
 		mouseOverMenu = false;
-		
+
 		imguiBeginFrame(mx,my,mbut,mscroll);
-		
+
 		if (sample)
 		{
 			sample->handleRenderOverlay((double*)proj, (double*)model, (int*)view);
@@ -515,11 +517,11 @@ int main(int /*argc*/, char** /*argv*/)
 			const char msg[] = "W/S/A/D: Move  RMB: Rotate   LMB+SHIFT: Place Start   LMB: Place End";
 			imguiDrawText(width/2, height-20, IMGUI_ALIGN_CENTER, msg, imguiRGBA(255,255,255,128));
 		}
-		
+
 		if (showMenu)
 		{
 			int propDiv = showDebugMode ? (int)(height*0.6f) : height;
-			
+
 			if (imguiBeginScrollArea("Properties",
 									 width-250-10, 10+height-propDiv, 250, propDiv-20, &propScroll))
 				mouseOverMenu = true;
@@ -541,15 +543,34 @@ int main(int /*argc*/, char** /*argv*/)
 				}
 				else
 				{
+					showMaps = false;
 					showSample = true;
 					showLevels = false;
 					showTestCases = false;
 				}
 			}
-			
+
 			imguiSeparator();
-			imguiLabel("Input Mesh");
-			if (imguiButton(meshName))
+			imguiLabel("Map");
+			if (imguiButton(mapName, strncmp(sampleName, "Choose Sample...", 16)))
+			{
+				if (showMaps)
+				{
+					showMaps = false;
+				}
+				else
+				{
+					showMaps = true;
+					showSample = false;
+					showTestCases = false;
+					showLevels = false;
+					scanDirectory("Meshes", ".map", maps);
+				}
+			}
+
+			imguiSeparator();
+			imguiLabel("Tile");
+			if (imguiButton(meshName, strncmp(mapName, "Choose Map...", 13)))
 			{
 				if (showLevels)
 				{
@@ -557,10 +578,11 @@ int main(int /*argc*/, char** /*argv*/)
 				}
 				else
 				{
+					showMaps = false;
 					showSample = false;
 					showTestCases = false;
 					showLevels = true;
-					scanDirectory("Meshes", ".obj", files);
+					scanDirectory("Meshes", ".mesh", files);
 				}
 			}
 			if (geom)
@@ -572,7 +594,7 @@ int main(int /*argc*/, char** /*argv*/)
 				imguiValue(text);
 			}
 			imguiSeparator();
-					
+
 			if (geom && sample)
 			{
 				sample->handleSettings();
@@ -586,7 +608,7 @@ int main(int /*argc*/, char** /*argv*/)
 						logScroll = 0;
 					}
 					ctx.dumpLog("Build log %s:", meshName);
-					
+
 					// Clear test.
 					delete test;
 					test = 0;
@@ -594,9 +616,9 @@ int main(int /*argc*/, char** /*argv*/)
 
 				imguiSeparator();
 			}
-			
+
 			imguiEndScrollArea();
-			
+
 			if (showDebugMode)
 			{
 				if (imguiBeginScrollArea("Debug Mode",
@@ -610,7 +632,7 @@ int main(int /*argc*/, char** /*argv*/)
 				imguiEndScrollArea();
 			}
 		}
-		
+
 		// Sample selection dialog.
 		if (showSample)
 		{
@@ -670,43 +692,72 @@ int main(int /*argc*/, char** /*argv*/)
 				glFogf(GL_FOG_START, camr*0.2f);
 				glFogf(GL_FOG_END, camr*1.25f);
 			}
-			
+
 			imguiEndScrollArea();
 		}
-		
+
+        // map selection dialog
+        if (showMaps)
+        {
+            static int scrolPos = 0;
+            if (imguiBeginScrollArea("Choose Map", width-10-250-10-200, height-10-450, 200, 450, &scrolPos))
+                mouseOverMenu = true;
+
+            int selectedMap = -1;
+            for (int i = 0; i < maps.size; ++i)
+                if (imguiItem(maps.files[i]))
+                    selectedMap = i;
+
+            if (selectedMap != -1)
+            {
+                strncpy(mapName, maps.files[selectedMap], sizeof(mapName));
+                mapName[sizeof(mapName)-1] = '\0';
+                showMaps = false;
+
+                delete geom;
+                geom = NULL;
+
+				if (sample)
+					sample->setMeshName(meshName);
+			}
+		}
+
 		// Level selection dialog.
 		if (showLevels)
 		{
 			static int levelScroll = 0;
-			if (imguiBeginScrollArea("Choose Level", width-10-250-10-200, height-10-450, 200, 450, &levelScroll))
+			if (imguiBeginScrollArea("Choose Tile", width-10-250-10-200, height-10-450, 200, 450, &levelScroll))
 				mouseOverMenu = true;
-			
+
 			int levelToLoad = -1;
 			for (int i = 0; i < files.size; ++i)
 			{
-				if (imguiItem(files.files[i]))
-					levelToLoad = i;
+				if (!strncmp(mapName, files.files[i], 3))
+				{
+					if (imguiItem(files.files[i]))
+						levelToLoad = i;
+				}
 			}
-			
+
 			if (levelToLoad != -1)
 			{
 				strncpy(meshName, files.files[levelToLoad], sizeof(meshName));
 				meshName[sizeof(meshName)-1] = '\0';
 				showLevels = false;
-				
+
 				delete geom;
 				geom = 0;
-				
+
 				char path[256];
 				strcpy(path, "Meshes/");
 				strcat(path, meshName);
-				
+
 				geom = new InputGeom;
 				if (!geom || !geom->loadMesh(&ctx, path))
 				{
 					delete geom;
 					geom = 0;
-					
+
 					showLog = true;
 					logScroll = 0;
 					ctx.dumpLog("Geom load log %s:", meshName);
@@ -714,6 +765,7 @@ int main(int /*argc*/, char** /*argv*/)
 				if (sample && geom)
 				{
 					sample->handleMeshChanged(geom);
+					sample->setMeshName(meshName);
 				}
 
 				if (geom || sample)
@@ -747,11 +799,11 @@ int main(int /*argc*/, char** /*argv*/)
 					glFogf(GL_FOG_END, camr*1.25f);
 				}
 			}
-			
+
 			imguiEndScrollArea();
-			
+
 		}
-		
+
 		// Test cases
 		if (showTestCases)
 		{
@@ -765,7 +817,7 @@ int main(int /*argc*/, char** /*argv*/)
 				if (imguiItem(files.files[i]))
 					testToLoad = i;
 			}
-			
+
 			if (testToLoad != -1)
 			{
 				char path[256];
@@ -802,19 +854,19 @@ int main(int /*argc*/, char** /*argv*/)
 					// Load geom.
 					strcpy(meshName, test->getGeomFileName());
 					meshName[sizeof(meshName)-1] = '\0';
-					
+
 					delete geom;
 					geom = 0;
-					
+
 					strcpy(path, "Meshes/");
 					strcat(path, meshName);
-					
+
 					geom = new InputGeom;
 					if (!geom || !geom->loadMesh(&ctx, path))
 					{
 						delete geom;
 						geom = 0;
-						
+
 						showLog = true;
 						logScroll = 0;
 						ctx.dumpLog("Geom load log %s:", meshName);
@@ -829,7 +881,7 @@ int main(int /*argc*/, char** /*argv*/)
 					{
 						ctx.dumpLog("Build log %s:", meshName);
 					}
-					
+
 					if (geom || sample)
 					{
 						const float* bmin = 0;
@@ -860,17 +912,17 @@ int main(int /*argc*/, char** /*argv*/)
 						glFogf(GL_FOG_START, camr*0.2f);
 						glFogf(GL_FOG_END, camr*1.25f);
 					}
-					
+
 					// Do the tests.
 					if (sample)
 						test->doTests(sample->getNavMesh(), sample->getNavMeshQuery());
 				}
-			}				
-				
+			}
+
 			imguiEndScrollArea();
 		}
 
-		
+
 		// Log
 		if (showLog && showMenu)
 		{
@@ -880,7 +932,7 @@ int main(int /*argc*/, char** /*argv*/)
 				imguiLabel(ctx.getLogText(i));
 			imguiEndScrollArea();
 		}
-		
+
 		// Tools
 		if (!showTestCases && showTools && showMenu && geom && sample)
 		{
@@ -888,12 +940,12 @@ int main(int /*argc*/, char** /*argv*/)
 				mouseOverMenu = true;
 
 			sample->handleTools();
-			
+
 			imguiEndScrollArea();
 		}
-		
+
 		slideShow.updateAndDraw(dt, (float)width, (float)height);
-		
+
 		// Marker
 		if (mposSet && gluProject((GLdouble)mpos[0], (GLdouble)mpos[1], (GLdouble)mpos[2],
 								  model, proj, view, &x, &y, &z))
@@ -913,20 +965,20 @@ int main(int /*argc*/, char** /*argv*/)
 			glEnd();
 			glLineWidth(1.0f);
 		}
-		
+
 		imguiEndFrame();
-		imguiRenderGLDraw();		
-		
+		imguiRenderGLDraw();
+
 		glEnable(GL_DEPTH_TEST);
 		SDL_GL_SwapBuffers();
 	}
-	
+
 	imguiRenderGLDestroy();
-	
+
 	SDL_Quit();
-	
+
 	delete sample;
 	delete geom;
-	
+
 	return 0;
 }

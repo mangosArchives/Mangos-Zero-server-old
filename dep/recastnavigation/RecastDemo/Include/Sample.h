@@ -19,6 +19,8 @@
 #ifndef RECASTSAMPLE_H
 #define RECASTSAMPLE_H
 
+#include <string.h>
+
 #include "Recast.h"
 #include "SampleInterfaces.h"
 
@@ -96,6 +98,8 @@ protected:
 	SampleTool* m_tool;
 	
 	BuildContext* m_ctx;
+    
+    char m_meshName[128];
 	
 public:
 	Sample();
@@ -131,6 +135,9 @@ public:
 
 	void resetCommonSettings();
 	void handleCommonSettings();
+    
+    inline void setMeshName(char* meshName) { memcpy(m_meshName, meshName, 128*sizeof(char)); }
+    inline char* getMeshName() { return m_meshName; }
 };
 
 

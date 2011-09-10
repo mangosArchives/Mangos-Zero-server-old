@@ -24,13 +24,13 @@
 
 inline unsigned int dtHashRef(dtPolyRef a)
 {
-	a += ~(a<<15);
-	a ^=  (a>>10);
-	a +=  (a<<3);
-	a ^=  (a>>6);
-	a += ~(a<<11);
-	a ^=  (a>>16);
-	return (unsigned int)a;
+    a = (~a) + (a << 18);
+    a = a ^ (a >> 31);
+    a = a * 21;
+    a = a ^ (a >> 11);
+    a = a + (a << 6);
+    a = a ^ (a >> 22);
+    return (unsigned int)a;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -94,13 +94,13 @@ dtNode* dtNodePool::getNode(dtPolyRef id)
 			return &m_nodes[i];
 		i = m_next[i];
 	}
-	
+
 	if (m_nodeCount >= m_maxNodes)
 		return 0;
-	
+
 	i = (unsigned short)m_nodeCount;
 	m_nodeCount++;
-	
+
 	// Init node
 	node = &m_nodes[i];
 	node->pidx = 0;
@@ -108,10 +108,10 @@ dtNode* dtNodePool::getNode(dtPolyRef id)
 	node->total = 0;
 	node->id = id;
 	node->flags = 0;
-	
+
 	m_next[i] = m_first[bucket];
 	m_first[bucket] = i;
-	
+
 	return node;
 }
 
@@ -123,7 +123,7 @@ dtNodeQueue::dtNodeQueue(int n) :
 	m_size(0)
 {
 	dtAssert(m_capacity > 0);
-	
+
 	m_heap = (dtNode**)dtAlloc(sizeof(dtNode*)*(m_capacity+1), DT_ALLOC_PERM);
 	dtAssert(m_heap);
 }
@@ -151,7 +151,7 @@ void dtNodeQueue::trickleDown(int i, dtNode* node)
 	int child = (i*2)+1;
 	while (child < m_size)
 	{
-		if (((child+1) < m_size) && 
+		if (((child+1) < m_size) &&
 			(m_heap[child]->total > m_heap[child+1]->total))
 		{
 			child++;

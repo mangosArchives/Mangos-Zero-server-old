@@ -130,7 +130,7 @@ bool InputGeom::loadMesh(rcContext* ctx, const char* filepath)
 	m_offMeshConCount = 0;
 	m_volumeCount = 0;
 	
-	m_mesh = new rcMeshLoaderObj;
+	m_mesh = new myMeshLoaderObj;
 	if (!m_mesh)
 	{
 		ctx->log(RC_LOG_ERROR, "loadMesh: Out of memory 'm_mesh'.");
