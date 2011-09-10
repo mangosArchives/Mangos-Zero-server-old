@@ -189,7 +189,6 @@ namespace MMAP
 
             int j, indices[3], loopStart, loopEnd, loopInc;
             getLoopVars(portion, loopStart, loopEnd, loopInc);
-
             for (i = loopStart; i < loopEnd; i+=loopInc)
                 for (j = TOP; j <= BOTTOM; j+=1)
                 {
@@ -203,26 +202,23 @@ namespace MMAP
         // liquid data
         if (haveLiquid)
         {
-            do
+            GridMapLiquidHeader lheader;
+            fseek(mapFile, fheader.liquidMapOffset, SEEK_SET);
+            fread(&lheader, sizeof(GridMapLiquidHeader), 1, mapFile);
+
+            float* liquid_map = NULL;
+
+            if (!(lheader.flags & MAP_LIQUID_NO_TYPE))
+                fread(liquid_type, sizeof(liquid_type), 1, mapFile);
+
+            if (!(lheader.flags & MAP_LIQUID_NO_HEIGHT))
             {
-                GridMapLiquidHeader lheader;
-                fseek(mapFile, fheader.liquidMapOffset, SEEK_SET);
-                fread(&lheader, sizeof(GridMapLiquidHeader), 1, mapFile);
+                liquid_map = new float [lheader.width*lheader.height];
+                fread(liquid_map, sizeof(float), lheader.width*lheader.height, mapFile);
+            }
 
-                float* liquid_map = 0;
-
-                if (!(lheader.flags & MAP_LIQUID_NO_TYPE))
-                    fread(liquid_type, sizeof(liquid_type), 1, mapFile);
-
-                if (!(lheader.flags & MAP_LIQUID_NO_HEIGHT))
-                {
-                    liquid_map = new float [lheader.width*lheader.height];
-                    fread(liquid_map, sizeof(float), lheader.width*lheader.height, mapFile);
-                }
-
-                if (!liquid_type && !liquid_map)
-                    break;
-
+            if (liquid_type && liquid_map)
+            {
                 int count = meshData.liquidVerts.size() / 3;
                 float xoffset = (float(tileX)-32)*GRID_SIZE;
                 float yoffset = (float(tileY)-32)*GRID_SIZE;
@@ -238,8 +234,9 @@ namespace MMAP
                     {
                         row = i / V9_SIZE;
                         col = i % V9_SIZE;
-                        if ((row < (lheader.offsetY) || row >= (lheader.offsetY + lheader.height)) ||
-                            (col < (lheader.offsetX) || col >= (lheader.offsetX + lheader.width)))
+
+                        if (row < lheader.offsetY || row >= lheader.offsetY + lheader.height ||
+                                col < lheader.offsetX || col >= lheader.offsetX + lheader.width)
                         {
                             // dummy vert using invalid height
                             meshData.liquidVerts.append((xoffset+col*GRID_PART_SIZE)*-1, INVALID_MAP_LIQ_HEIGHT, (yoffset+row*GRID_PART_SIZE)*-1);
@@ -279,29 +276,35 @@ namespace MMAP
                         ltriangles.append(indices[0] + count);
                     }
 
-            } while (0);
+            }
         }
 
         fclose(mapFile);
 
         // now that we have gathered the data, we can figure out which parts to keep:
-        // liquid above ground
-        // ground above any liquid type
-        // ground below <1.5 yard of water
-
+        // liquid above ground, ground above liquid
         int loopStart, loopEnd, loopInc, tTriCount = 4;
         bool useTerrain, useLiquid;
 
         float* lverts = meshData.liquidVerts.getCArray();
-        float* tverts = meshData.solidVerts.getCArray();
         int* ltris = ltriangles.getCArray();
+
+        float* tverts = meshData.solidVerts.getCArray();
         int* ttris = ttriangles.getCArray();
 
         if (ltriangles.size() + ttriangles.size() == 0)
             return false;
 
-        getLoopVars(portion, loopStart, loopEnd, loopInc);
+        // make a copy of liquid vertices
+        // used to pad right-bottom frame due to lost vertex data at extraction
+        float* lverts_copy = NULL;
+        if(meshData.liquidVerts.size())
+        {
+            lverts_copy = new float[meshData.liquidVerts.size()];
+            memcpy(lverts_copy, lverts, sizeof(float)*meshData.liquidVerts.size());
+        }
 
+        getLoopVars(portion, loopStart, loopEnd, loopInc);
         for (int i = loopStart; i < loopEnd; i+=loopInc)
         {
             for (int j = 0; j < 2; ++j)
@@ -309,7 +312,7 @@ namespace MMAP
                 // default is true, will change to false if needed
                 useTerrain = true;
                 useLiquid = true;
-                uint8 liquidType;
+                uint8 liquidType = MAP_LIQUID_TYPE_NO_WATER;
 
                 // if there is no liquid, don't use liquid
                 if (!liquid_type ||
@@ -347,43 +350,80 @@ namespace MMAP
                 if (!ttriangles.size())
                     useTerrain = false;
 
-                // liquid is rendered as quads.  If any triangle has invalid height,
-                // don't render any of the triangles in that quad
+                // while extracting ADT data we are losing right-bottom vertices
+                // this code adds fair approximation of lost data
                 if (useLiquid)
-                    if ((&lverts[ltris[0]*3])[1] == INVALID_MAP_LIQ_HEIGHT ||
-                        (&lverts[ltris[1]*3])[1] == INVALID_MAP_LIQ_HEIGHT ||
-                        (&lverts[ltris[2]*3])[1] == INVALID_MAP_LIQ_HEIGHT)
+                {
+                    float quadHeight = 0;
+                    uint32 validCount = 0;
+                    for(uint32 idx = 0; idx < 3; idx++)
                     {
-                        useLiquid = false;
+                        float h = lverts_copy[ltris[idx]*3 + 1];
+                        if(h != INVALID_MAP_LIQ_HEIGHT && h < INVALID_MAP_LIQ_HEIGHT_MAX)
+                        {
+                            quadHeight += h;
+                            validCount++;
+                        }
                     }
+
+                    // update vertex height data
+                    if(validCount > 0 && validCount < 3)
+                    {
+                        quadHeight /= validCount;
+                        for(uint32 idx = 0; idx < 3; idx++)
+                        {
+                            float h = lverts[ltris[idx]*3 + 1];
+                            if(h == INVALID_MAP_LIQ_HEIGHT || h > INVALID_MAP_LIQ_HEIGHT_MAX)
+                                lverts[ltris[idx]*3 + 1] = quadHeight;
+                        }
+                    }
+
+                    // no valid vertexes - don't use this poly at all
+                    if(validCount == 0)
+                        useLiquid = false;
+                }
 
                 // if there is a hole here, don't use the terrain
                 if (useTerrain)
                     useTerrain = !isHole(i, holes);
 
+                // we use only one terrain kind per quad - pick higher one
                 if (useTerrain && useLiquid)
                 {
-                    // get the indexes of the corners of the quad
-                    int idx1, idx2, idx3;
-                    if (j == 0)
+                    float minLLevel = INVALID_MAP_LIQ_HEIGHT_MAX;
+                    float maxLLevel = INVALID_MAP_LIQ_HEIGHT;
+                    for(uint32 x = 0; x < 3; x++)
                     {
-                    idx1 = 0;
-                    idx2 = 3*tTriCount/2-2;
-                    idx3 = 3*tTriCount/2-1;
+                        float h = lverts[ltris[x]*3 + 1];
+                        if(minLLevel > h)
+                            minLLevel = h;
+
+                        if(maxLLevel < h)
+                            maxLLevel = h;
+                    }
+
+                    float maxTLevel = INVALID_MAP_LIQ_HEIGHT;
+                    float minTLevel = INVALID_MAP_LIQ_HEIGHT_MAX;
+                    for(uint32 x = 0; x < 6; x++)
+                    {
+                        float h = tverts[ttris[x]*3 + 1];
+                        if(maxTLevel < h)
+                            maxTLevel = h;
+
+                        if(minTLevel > h)
+                            minTLevel = h;
+                    }
+
+                    // terrain under the liquid?
+                    if(minLLevel > maxTLevel)
+                        useTerrain = false;
+
+                    //liquid under the terrain?
+                    if(minTLevel > maxLLevel)
+                        useLiquid = false;
                 }
 
-                if (useTerrain &&
-                   (&lverts[ltris[0]*3])[1] - 1.5f > (&tverts[ttris[idx1]*3])[1] &&
-                   (&lverts[ltris[1]*3])[1] - 1.5f > (&tverts[ttris[idx2]*3])[1] &&
-                   (&lverts[ltris[2]*3])[1] - 1.5f > (&tverts[ttris[idx3]*3])[1])
-                    useTerrain = false; // if the whole terrain triangle is 1.5yds under liquid, don't use it
-                else if (useLiquid &&
-                        (&lverts[ltris[0]*3])[1] < (&tverts[ttris[idx1]*3])[1] &&
-                        (&lverts[ltris[1]*3])[1] < (&tverts[ttris[idx2]*3])[1] &&
-                        (&lverts[ltris[2]*3])[1] < (&tverts[ttris[idx3]*3])[1])
-                    useLiquid = false;  // if the whole liquid triangle is under terrain, don't use it
-                }
-
+                // store the result
                 if (useLiquid)
                 {
                     meshData.liquidType.append(liquidType);
@@ -400,6 +440,9 @@ namespace MMAP
                 ttris += 3*tTriCount/2;
             }
         }
+
+        if(lverts_copy)
+            delete [] lverts_copy;
 
         return meshData.solidTris.size() || meshData.liquidTris.size();
     }
