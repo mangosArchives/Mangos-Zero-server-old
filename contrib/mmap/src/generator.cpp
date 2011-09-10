@@ -264,7 +264,7 @@ int main(int argc, char** argv)
                        skipBattlegrounds, debugOutput, bigBaseUnit, offMeshInputPath);
 
     if (tileX > -1 && tileY > -1 && mapnum >= 0)
-        builder.buildTile(mapnum, tileX, tileY);
+        builder.buildSingleTile(mapnum, tileX, tileY);
     else if (mapnum >= 0)
         builder.buildMap(uint32(mapnum));
     else
