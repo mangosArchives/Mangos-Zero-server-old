@@ -9,6 +9,17 @@ be a part of any redistributable packages made from this software.  No licenses
 should be removed from this software if you are making redistributable copies.
 
 
+Development
+-----------
+The **develop** branch is where the development of *mangos-zero server* is done.
+Any of the commits submitted here may or may not become part of the next
+release.
+
+It is recommended to use the **master** branch for stable systems, and only use
+the **develop** branch if you intend to test commits and submit issues and/or
+reports.
+
+
 Compatibility
 -------------
 *mangos-zero* is compatible with [scriptdev0 revision 464][11], and the game
