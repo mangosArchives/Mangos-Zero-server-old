@@ -5385,6 +5385,7 @@ uint32 Unit::SpellDamageBonusTaken(Unit *pCaster, SpellEntry const *spellProto, 
     int32 TakenTotal = 0;
 
 
+
     // ..taken
     TakenTotalMod *= GetTotalAuraMultiplierByMiscMask(SPELL_AURA_MOD_DAMAGE_PERCENT_TAKEN, schoolMask);
 
@@ -7149,6 +7150,7 @@ int32 Unit::CalculateSpellDamage(Unit const* target, SpellEntry const* spellProt
         level = (int32)spellProto->maxLevel;
     else if (level < (int32)spellProto->baseLevel)
         level = (int32)spellProto->baseLevel;
+
     level-= (int32)spellProto->spellLevel;
 
     int32 baseDice = int32(spellProto->EffectBaseDice[effect_index]);
@@ -8864,7 +8866,7 @@ void Unit::MonsterMoveWithSpeed(float x, float y, float z, uint32 transitTime)
     }
 }
 
-void Unit::MonsterMoveByPath(float x, float y, float z, uint32 speed, bool smoothPath, bool forceDest = false)
+void Unit::MonsterMoveByPath(float x, float y, float z, uint32 speed, bool smoothPath, bool forceDest)
 {
     PathInfo path(this, x, y, z, !smoothPath, forceDest);
     PointPath pointPath = path.getFullPath();
