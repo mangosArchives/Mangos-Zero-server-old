@@ -108,6 +108,7 @@ class PathInfo
 
         dtPolyRef getPathPolyByPosition(dtPolyRef *polyPath, uint32 polyPathSize, const float* point, float *distance = NULL);
         dtPolyRef getPolyByLocation(const float* point, float *distance);
+        bool HaveTiles(const PathNode p) const;
 
         void BuildPolyPath(PathNode startPos, PathNode endPos);
         void BuildPointPath(float *startPoint, float *endPoint);

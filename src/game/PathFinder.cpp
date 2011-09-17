@@ -52,7 +52,8 @@ PathInfo::PathInfo(const Unit* owner, const float destX, const float destY, cons
 
     createFilter();
 
-    if (m_navMesh && m_navMeshQuery && !m_sourceUnit->hasUnitState(UNIT_STAT_IGNORE_PATHFINDING))
+    if (m_navMesh && m_navMeshQuery && HaveTiles(endPoint) &&
+            !m_sourceUnit->hasUnitState(UNIT_STAT_IGNORE_PATHFINDING))
     {
         BuildPolyPath(startPoint, endPoint);
     }
@@ -87,7 +88,8 @@ bool PathInfo::Update(const float destX, const float destY, const float destZ,
     DEBUG_FILTER_LOG(LOG_FILTER_PATHFINDING, "++ PathInfo::Update() for %u \n", m_sourceUnit->GetGUID());
 
     // make sure navMesh works - we can run on map w/o mmap
-    if (!m_navMesh || !m_navMeshQuery || m_sourceUnit->hasUnitState(UNIT_STAT_IGNORE_PATHFINDING))
+    if (!m_navMesh || !m_navMeshQuery || !HaveTiles(newDest) ||
+            m_sourceUnit->hasUnitState(UNIT_STAT_IGNORE_PATHFINDING))
     {
         BuildShortcut();
         m_type = PathType(PATHFIND_NORMAL | PATHFIND_NOT_USING_PATH);
@@ -557,6 +559,16 @@ NavTerrain PathInfo::getNavTerrain(float x, float y, float z)
         default:
             return NAV_GROUND;
     }
+}
+
+bool PathInfo::HaveTiles(const PathNode p) const
+{
+    int tx, ty;
+    float point[VERTEX_SIZE] = {p.y, p.z, p.x};
+
+    // check if the start and end point have a .mmtile loaded
+    m_navMesh->calcTileLoc(point, &tx, &ty);
+    return (m_navMesh->getTileAt(tx, ty) != NULL);
 }
 
 uint32 PathInfo::fixupCorridor(dtPolyRef* path, const uint32 npath, const uint32 maxPath,
