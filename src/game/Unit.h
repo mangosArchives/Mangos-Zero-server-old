@@ -1277,7 +1277,7 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         void MonsterMove(float x, float y, float z, uint32 transitTime);
         void MonsterMoveWithSpeed(float x, float y, float z, uint32 transitTime = 0);
 
-        void MonsterMoveByPath(float x, float y, float z, uint32 speed, bool smoothPath = true);
+        void MonsterMoveByPath(float x, float y, float z, uint32 speed, bool smoothPath = true, bool forceDest = false);
         template<typename PathElem, typename PathNode>
         void MonsterMoveByPath(Path<PathElem,PathNode> const& path, uint32 start, uint32 end, uint32 transitTime = 0);
 
