@@ -269,7 +269,6 @@ class MANGOS_DLL_SPEC Aura
         void HandleAuraModRoot(bool Apply, bool Real);
         void HandleAuraModSilence(bool Apply, bool Real);
         void HandleAuraModStat(bool Apply, bool Real);
-        void HandleDetectAmore(bool Apply, bool Real);
         void HandleAuraModIncreaseSpeed(bool Apply, bool Real);
         void HandleAuraModIncreaseMountedSpeed(bool Apply, bool Real);
         void HandleAuraModDecreaseSpeed(bool Apply, bool Real);
