@@ -7226,11 +7226,11 @@ void Unit::ApplyDiminishingToDuration(DiminishingGroup group, int32 &duration,Un
     if (duration > 15*IN_MILLISECONDS && IsDiminishingReturnsGroupDurationLimited(group))
     {
         // test pet/charm masters instead pets/charmeds
-        Unit const* targetOwner = unit->GetCharmerOrOwner();
-        Unit const* casterOwner = caster->GetCharmerOrOwner();
+        Unit* targetOwner = this->GetCharmerOrOwner();
+        Unit* casterOwner = caster->GetCharmerOrOwner();
 
-        Unit const* target = targetOwner ? targetOwner : unit;
-        Unit const* source = casterOwner ? casterOwner : caster;
+        Unit* target = targetOwner ? targetOwner : this;
+        Unit* source = casterOwner ? casterOwner : caster;
 
         if(target->GetTypeId() == TYPEID_PLAYER && source->GetTypeId() == TYPEID_PLAYER)
             duration = 15000;
