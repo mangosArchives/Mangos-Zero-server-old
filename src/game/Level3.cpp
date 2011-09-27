@@ -55,7 +55,6 @@
 #include "InstanceData.h"
 #include "DBCStores.h"
 #include "CreatureEventAIMgr.h"
-#include "extras/Mod.h"
 
 //reload commands
 bool ChatHandler::HandleReloadAllCommand(char* /*args*/)
@@ -202,7 +201,6 @@ bool ChatHandler::HandleReloadConfigCommand(char* /*args*/)
 {
     sLog.outString( "Re-Loading config settings..." );
     sWorld.LoadConfigSettings(true);
-    sMod.LoadModConfSettings();
     sMapMgr.InitializeVisibilityDistanceInfo();
     SendGlobalSysMessage("World config settings reloaded.");
     return true;

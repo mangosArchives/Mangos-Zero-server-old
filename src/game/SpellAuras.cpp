@@ -45,7 +45,6 @@
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
-#include "extras/Mod.h"
 
 #define NULL_AURA_SLOT 0xFF
 
@@ -584,7 +583,6 @@ void Aura::ApplyModifier(bool apply, bool Real)
     if(aura < TOTAL_AURAS)
         (*this.*AuraHandler [aura])(apply, Real);
 
-    sMod.auraApplyModifier(this,aura,apply,Real);
     SetInUse(false);
     GetHolder()->SetInUse(false);
 }
