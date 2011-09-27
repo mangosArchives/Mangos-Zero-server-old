@@ -50,7 +50,6 @@
 #include "DBCStores.h"
 #include "VMapFactory.h"
 #include "MovementGenerator.h"
-#include "extras/Mod.h"
 
 #include <math.h>
 #include <stdarg.h>
