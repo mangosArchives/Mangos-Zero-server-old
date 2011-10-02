@@ -5158,6 +5158,9 @@ int32 Unit::DealHeal(Unit *pVictim, uint32 addhealth, SpellEntry const *spellPro
 {
     int32 gain = pVictim->ModifyHealth(int32(addhealth));
 
+    if (pVictim->GetTypeId() == TYPEID_UNIT && ((Creature*)pVictim)->AI())
+        ((Creature*)pVictim)->AI()->HealBy(this, addhealth);
+
     Unit* unit = this;
 
     if( GetTypeId()==TYPEID_UNIT && ((Creature*)this)->IsTotem())
