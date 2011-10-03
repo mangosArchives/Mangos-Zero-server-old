@@ -3522,20 +3522,8 @@ void Spell::EffectScriptEffect(SpellEffectIndex eff_idx)
                 }
                 case 28560:                                 // Summon Blizzard
                 {
-                    if (!unitTarget)
-                        return;
-
-                    m_caster->SummonCreature(16474, unitTarget->GetPositionX(), unitTarget->GetPositionY(), unitTarget->GetPositionZ(), 0.0f, TEMPSUMMON_TIMED_DESPAWN, 30000);
+                    m_caster->CastSpell(m_caster, 28561, true);
                     return;
-                }
-                case 30918:                                 // Improved Sprint
-                {
-                    if (!unitTarget)
-                        return;
-
-                    // Removes snares and roots.
-                    unitTarget->RemoveAurasAtMechanicImmunity(IMMUNE_TO_ROOT_AND_SNARE_MASK,30918,true);
-                    break;
                 }
             }
             break;
