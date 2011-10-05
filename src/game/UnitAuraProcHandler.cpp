@@ -647,17 +647,6 @@ SpellAuraProcResult Unit::HandleDummyAuraProc(Unit *pVictim, uint32 damage, Aura
                 mod->m_amount-=damage;
                 return SPELL_AURA_PROC_OK;
             }
-            switch(dummySpell->Id)
-            {
-                // Nightfall
-                case 18094:
-                case 18095:
-                {
-                    target = this;
-                    triggered_spell_id = 17941;
-                    break;
-                }
-            }
             break;
         }
         case SPELLFAMILY_PRIEST:
@@ -1301,6 +1290,9 @@ SpellAuraProcResult Unit::HandleOverrideClassScriptAuraProc(Unit *pVictim, uint3
             triggered_spell_id = 24406;
             break;
         }
+        case 4309:                                          // Nightfall
+            triggered_spell_id = 17941;
+            break;
         case 4533:                                          // Dreamwalker Raiment 2 pieces bonus
         {
             // Chance 50%
