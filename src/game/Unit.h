@@ -1700,6 +1700,8 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         void _SetAINotifyScheduled(bool on) { m_AINotifyScheduled = on;}       // only for call from RelocationNotifyEvent code
         void OnRelocated();
 
+        bool IsLinkingEventTrigger() { return m_isCreatureLinkingTrigger; }
+
     protected:
         explicit Unit ();
 
@@ -1749,6 +1751,9 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         uint32 m_reactiveTimer[MAX_REACTIVE];
         uint32 m_regenTimer;
         uint32 m_lastManaUseTimer;
+
+        bool m_isCreatureLinkingTrigger;
+        bool m_isSpawningLinked;
 
     private:
         void CleanupDeletedAuras();
