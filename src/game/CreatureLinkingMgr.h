@@ -38,9 +38,9 @@
 
 #include "Common.h"
 #include "Policies/Singleton.h"
+#include "ObjectGuid.h"
 #include <functional>
 
-class ObjectGuid;
 class Unit;
 class Creature;
 
