@@ -38,6 +38,7 @@
 
 #include "Common.h"
 #include "Policies/Singleton.h"
+#include <functional>
 
 class ObjectGuid;
 class Unit;
