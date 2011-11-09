@@ -271,7 +271,9 @@ BattleGround::~BattleGround()
         DelObject(i);
 
     sBattleGroundMgr.RemoveBattleGround(GetInstanceID(), GetTypeID());
-    sBattleGroundMgr.DeleteClientVisibleInstanceId(GetTypeID(), GetBracketId(), GetClientInstanceID());
+	// if its not template bg
+	if(GetBracketId()!=MAX_BATTLEGROUND_BRACKETS)
+		sBattleGroundMgr.DeleteClientVisibleInstanceId(GetTypeID(), GetBracketId(), GetClientInstanceID());
 
     // unload map
     // map can be null at bg destruction
