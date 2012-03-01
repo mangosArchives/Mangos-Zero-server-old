@@ -1,0 +1,12 @@
+diff --git a/dep/src/g3dlite/prompt.cpp b/dep/src/g3dlite/prompt.cpp
+index d78f8b7..df3da50 100644
+--- a/dep/src/g3dlite/prompt.cpp
++++ b/dep/src/g3dlite/prompt.cpp
+@@ -21,6 +21,7 @@
+ #    define _getch getchar
+ #endif
+ 
++#undef G3D_OSX
+ #if 0 /* MANGOS exclude for disabled gui prompt */
+ #ifdef G3D_OSX
+

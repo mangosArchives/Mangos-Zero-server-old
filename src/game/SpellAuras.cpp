@@ -828,18 +828,15 @@ void Aura::TriggerSpell()
                     {
                         trigger_spell_id = 25779;           // Mana Burn
 
-                        // expected selection current fight target
-                        triggerTarget = GetTarget()->getVictim();
-                        if (!triggerTarget || triggerTarget->GetMaxPower(POWER_MANA) <= 0)
+                        if (GetTarget()->GetTypeId() != TYPEID_UNIT)
                             return;
 
                         triggeredSpellInfo = sSpellStore.LookupEntry(trigger_spell_id);
                         if (!triggeredSpellInfo)
                             return;
 
-                        SpellRangeEntry const* srange = sSpellRangeStore.LookupEntry(triggeredSpellInfo->rangeIndex);
-                        float max_range = GetSpellMaxRange(srange);
-                        if (!triggerTarget->IsWithinDist(GetTarget(),max_range))
+                        triggerTarget = ((Creature*)GetTarget())->SelectAttackingTarget(ATTACKING_TARGET_TOPAGGRO, 0, trigger_spell_id, SELECT_FLAG_POWER_MANA);
+                        if (!triggerTarget)
                             return;
 
                         break;
@@ -4640,8 +4637,24 @@ void Aura::PeriodicTick()
                 int32 gain = pCaster->ModifyPower(power, gain_amount);
                 target->AddThreat(pCaster, float(gain) * 0.5f, false, GetSpellSchoolMask(spellProto), spellProto);
             }
+            
+            // Some special cases
+            switch (GetId())
+            {
+                case 21056:                                 // Mark of Kazzak
+                    if (target->GetTypeId() == TYPEID_PLAYER && target->GetPower(power) == 0)
+                    {
+                        target->CastSpell(target, 21058, true, NULL, this);
+                        target->RemoveAurasDueToSpell(GetId());
+                    }
+                   break;
+            }
+            
             break;
         }
+        
+        
+        
         case SPELL_AURA_PERIODIC_ENERGIZE:
         {
             // don't energize target if not alive, possible death persistent effects
