@@ -1403,6 +1403,20 @@ void WorldObject::AddObjectToRemoveList()
     GetMap()->AddObjectToRemoveList(this);
 }
 
+// method to "SUMMON AN OBJECT"
+GameObject* WorldObject::SummonObject(Map *map, uint32 id, float x, float y, float z, float o)
+{
+       GameObject* pGameObj = new GameObject;
+       if(!pGameObj->Create(GetMap()->GenerateLocalLowGuid(HIGHGUID_GAMEOBJECT), id, GetMap(), x, y, z, o, 0, 0, 0, 0, 100, GO_STATE_READY))
+       {
+               delete pGameObj;
+               return NULL;
+       }
+       map->Add(pGameObj);
+
+       return pGameObj;
+}
+
 Creature* WorldObject::SummonCreature(uint32 id, float x, float y, float z, float ang,TempSummonType spwtype,uint32 despwtime, bool asActiveObject)
 {
     CreatureInfo const *cinfo = ObjectMgr::GetCreatureTemplate(id);
