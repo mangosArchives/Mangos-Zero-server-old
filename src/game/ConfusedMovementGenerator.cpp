@@ -120,7 +120,7 @@ bool ConfusedMovementGenerator<T>::Update(T &unit, const uint32 &diff)
         Traveller<T> traveller(unit);
         if (i_destinationHolder.UpdateTraveller(traveller, diff, false))
         {
-            if (!IsActive(unit))                            // force stop processing (movement can move out active zone with cleanup movegens list)
+            if (!this->IsActive(unit))                      // force stop processing (movement can move out active zone with cleanup movegens list)
                 return true;                                // not expire now, but already lost
 
             if (i_destinationHolder.HasArrived())

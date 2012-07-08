@@ -156,7 +156,7 @@ bool TargetedMovementGeneratorMedium<T,D>::Update(T &owner, const uint32 & time_
 
     if (i_destinationHolder.UpdateTraveller(traveller, time_diff, false))
     {
-        if (!IsActive(owner))                               // force stop processing (movement can move out active zone with cleanup movegens list)
+        if (!this->IsActive(owner))                         // force stop processing (movement can move out active zone with cleanup movegens list)
             return true;                                    // not expire now, but already lost
 
         // put targeted movement generators on a higher priority
