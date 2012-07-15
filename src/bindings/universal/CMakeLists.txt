@@ -46,7 +46,7 @@ if(WIN32)
   )
   if(WIN32 AND PLATFORM MATCHES X86)
     target_link_libraries(mangosscript
-      debug ${WIN_DEBUGLIBS}
+      # debug ${WIN_DEBUGLIBS}
     )
   endif()
 endif()
