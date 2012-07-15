@@ -1,24 +1,9 @@
-/*
- * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
- * Copyright (C) 2009-2011 MaNGOSZero <https://github.com/mangos-zero>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
 
 #include "Debug.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <vector>
 #include "DetourNavMesh.h"
 #include "Recast.h"
@@ -59,8 +44,6 @@ void duReadNavMesh(char* tile, dtNavMesh* &navMesh)
     int count = 0;
     for (int i = x-1; i <= x+1; ++i)
         for (int j = y-1; j <= y+1; ++j)
-    //int i = x;
-    //int j = y;
         {
             sprintf(fname, "mmaps/%03i%02i%02i.mmtile", map, j, i);
             file = fopen(fname, "rb");
@@ -314,19 +297,19 @@ int duReadDetailMesh(char* tile, rcPolyMeshDetail* &mesh)
 }
 
 myMeshLoaderObj::myMeshLoaderObj() :
-	m_verts(0),
-	m_tris(0),
-	m_normals(0),
-	m_vertCount(0),
-	m_triCount(0)
+    m_verts(0),
+    m_tris(0),
+    m_normals(0),
+    m_vertCount(0),
+    m_triCount(0)
 {
 }
 
 myMeshLoaderObj::~myMeshLoaderObj()
 {
-	delete [] m_verts;
-	delete [] m_normals;
-	delete [] m_tris;
+    delete [] m_verts;
+    delete [] m_normals;
+    delete [] m_tris;
 }
 
 bool myMeshLoaderObj::load(const char* filename)
@@ -358,34 +341,34 @@ bool myMeshLoaderObj::load(const char* filename)
     m_tris = tris;
     m_triCount = triCount;
 
-	m_normals = new float[m_triCount*3];
-	for (int i = 0; i < m_triCount*3; i += 3)
-	{
-		const float* v0 = &m_verts[m_tris[i]*3];
-		const float* v1 = &m_verts[m_tris[i+1]*3];
-		const float* v2 = &m_verts[m_tris[i+2]*3];
-		float e0[3], e1[3];
-		for (int j = 0; j < 3; ++j)
-		{
-			e0[j] = v1[j] - v0[j];
-			e1[j] = v2[j] - v0[j];
-		}
-		float* n = &m_normals[i];
-		n[0] = e0[1]*e1[2] - e0[2]*e1[1];
-		n[1] = e0[2]*e1[0] - e0[0]*e1[2];
-		n[2] = e0[0]*e1[1] - e0[1]*e1[0];
-		float d = sqrtf(n[0]*n[0] + n[1]*n[1] + n[2]*n[2]);
-		if (d > 0)
-		{
-			d = 1.0f/d;
-			n[0] *= d;
-			n[1] *= d;
-			n[2] *= d;
-		}
-	}
+    m_normals = new float[m_triCount*3];
+    for (int i = 0; i < m_triCount*3; i += 3)
+    {
+        const float* v0 = &m_verts[m_tris[i]*3];
+        const float* v1 = &m_verts[m_tris[i+1]*3];
+        const float* v2 = &m_verts[m_tris[i+2]*3];
+        float e0[3], e1[3];
+        for (int j = 0; j < 3; ++j)
+        {
+            e0[j] = v1[j] - v0[j];
+            e1[j] = v2[j] - v0[j];
+        }
+        float* n = &m_normals[i];
+        n[0] = e0[1]*e1[2] - e0[2]*e1[1];
+        n[1] = e0[2]*e1[0] - e0[0]*e1[2];
+        n[2] = e0[0]*e1[1] - e0[1]*e1[0];
+        float d = sqrtf(n[0]*n[0] + n[1]*n[1] + n[2]*n[2]);
+        if (d > 0)
+        {
+            d = 1.0f/d;
+            n[0] *= d;
+            n[1] *= d;
+            n[2] *= d;
+        }
+    }
 
-	strncpy(m_filename, filename, sizeof(m_filename));
-	m_filename[sizeof(m_filename)-1] = '\0';
+    strncpy(m_filename, filename, sizeof(m_filename));
+    m_filename[sizeof(m_filename)-1] = '\0';
 
-	return true;
+    return true;
 }

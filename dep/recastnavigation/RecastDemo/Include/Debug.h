@@ -1,21 +1,3 @@
-/*
- * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
- * Copyright (C) 2009-2011 MaNGOSZero <https://github.com/mangos-zero>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
 
 #ifndef _MMAP_DEBUG_H
 #define _MMAP_DEBUG_H
@@ -37,25 +19,48 @@ int duReadDetailMesh(char* tile, rcPolyMeshDetail* &mesh);
 class myMeshLoaderObj
 {
 private:
-	float* m_verts;
-	int* m_tris;
-	float* m_normals;
-	int m_vertCount;
-	int m_triCount;
-	char m_filename[260];
+    float* m_verts;
+    int* m_tris;
+    float* m_normals;
+    int m_vertCount;
+    int m_triCount;
+    char m_filename[260];
 
 public:
-	myMeshLoaderObj();
-	~myMeshLoaderObj();
-	
-	bool load(const char* fileName);
+    myMeshLoaderObj();
+    ~myMeshLoaderObj();
 
-	inline const float* getVerts() const { return m_verts; }
-	inline const float* getNormals() const { return m_normals; }
-	inline const int* getTris() const { return m_tris; }
-	inline int getVertCount() const { return m_vertCount; }
-	inline int getTriCount() const { return m_triCount; }
-	inline const char* getFileName() const { return m_filename; }
+    bool load(const char* fileName);
+
+    inline const float* getVerts() const { return m_verts; }
+    inline const float* getNormals() const { return m_normals; }
+    inline const int* getTris() const { return m_tris; }
+    inline int getVertCount() const { return m_vertCount; }
+    inline int getTriCount() const { return m_triCount; }
+    inline const char* getFileName() const { return m_filename; }
+};
+
+enum NavTerrain
+{
+    NAV_EMPTY   = 0x00,
+    NAV_GROUND  = 0x01,
+    NAV_MAGMA   = 0x02,
+    NAV_SLIME   = 0x04,
+    NAV_WATER   = 0x08,
+    NAV_UNUSED1 = 0x10,
+    NAV_UNUSED2 = 0x20,
+    NAV_UNUSED3 = 0x40,
+    NAV_UNUSED4 = 0x80
+    // we only have 8 bits
+};
+
+struct MmapTileHeader
+{
+    unsigned int mmapMagic;
+    unsigned int dtVersion;
+    unsigned int mmapVersion;
+    unsigned int size;
+    bool usesLiquid : 1;
 };
 
 #endif
