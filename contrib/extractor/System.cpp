@@ -41,8 +41,8 @@
     #include <sys/types.h>
     #include <unistd.h>
 
-    #define _open	open
-    #define _close	close
+    #define _open   open
+    #define _close  close
 
     #ifndef O_BINARY
         #define O_BINARY 0
