@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
- * Copyright (C) 2009-2011 MaNGOSZero <https://github.com/mangos-zero>
+ * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
+ * Copyright (C) 2009-2012 MaNGOSZero <https://github.com/mangos-zero>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,7 +194,7 @@ namespace MMAP
     /**************************************************************************/
     void MapBuilder::buildSingleTile(uint32 mapID, uint32 tileX, uint32 tileY)
     {
-       dtNavMesh* navMesh = NULL;
+        dtNavMesh* navMesh = NULL;
         buildNavMesh(mapID, navMesh);
         if (!navMesh)
         {
@@ -315,6 +315,7 @@ namespace MMAP
         int maxPolysPerTile = 1 << polyBits;
 
         /***          calculate bounds of map         ***/
+
         uint32 tileXMin = 64, tileYMin = 64, tileXMax = 0, tileYMax = 0, tileX, tileY;
         for (set<uint32>::iterator it = tiles->begin(); it != tiles->end(); ++it)
         {

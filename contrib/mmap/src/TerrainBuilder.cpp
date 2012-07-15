@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
- * Copyright (C) 2009-2011 MaNGOSZero <https://github.com/mangos-zero>
+ * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
+ * Copyright (C) 2009-2012 MaNGOSZero <https://github.com/mangos-zero>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -236,7 +236,7 @@ namespace MMAP
                         col = i % V9_SIZE;
 
                         if (row < lheader.offsetY || row >= lheader.offsetY + lheader.height ||
-                                col < lheader.offsetX || col >= lheader.offsetX + lheader.width)
+                            col < lheader.offsetX || col >= lheader.offsetX + lheader.width)
                         {
                             // dummy vert using invalid height
                             meshData.liquidVerts.append((xoffset+col*GRID_PART_SIZE)*-1, INVALID_MAP_LIQ_HEIGHT, (yoffset+row*GRID_PART_SIZE)*-1);
@@ -275,7 +275,6 @@ namespace MMAP
                         ltriangles.append(indices[1] + count);
                         ltriangles.append(indices[0] + count);
                     }
-
             }
         }
 
@@ -315,10 +314,8 @@ namespace MMAP
                 uint8 liquidType = MAP_LIQUID_TYPE_NO_WATER;
 
                 // if there is no liquid, don't use liquid
-                if (!liquid_type ||
-                        !meshData.liquidVerts.size() ||
-                        !ltriangles.size())
-                    useLiquid = false;
+                if (!liquid_type || !meshData.liquidVerts.size() || !ltriangles.size())
+                     useLiquid = false;
                 else
                 {
                     liquidType = getLiquidType(i, liquid_type);
@@ -408,10 +405,10 @@ namespace MMAP
                     {
                         float h = tverts[ttris[x]*3 + 1];
                         if(maxTLevel < h)
-                            maxTLevel = h;
+                             maxTLevel = h;
 
                         if(minTLevel > h)
-                            minTLevel = h;
+                             minTLevel = h;
                     }
 
                     // terrain under the liquid?
