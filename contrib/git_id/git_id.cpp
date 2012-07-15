@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
- * Copyright (C) 2009-2011 MaNGOSZero <https://github.com/mangos-zero>
+ * Copyright (C) 2009-2012 MaNGOSZero <https://github.com/mangos-zero>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -660,7 +660,7 @@ bool generate_sql_makefile()
 
     fprintf(fout,
         "# Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>\n"
-        "# Copyright (C) 2009-2011 MaNGOSZero <http://github.com/mangoszero/mangoszero/>\n"
+        "# Copyright (C) 2009-2012 MaNGOSZero <http://github.com/mangos-zero>\n"
         "#\n"
         "# This program is free software; you can redistribute it and/or modify\n"
         "# it under the terms of the GNU General Public License as published by\n"
