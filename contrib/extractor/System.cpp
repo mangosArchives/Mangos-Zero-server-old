@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
+ * Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
  * Copyright (C) 2009-2012 MaNGOSZero <https://github.com/mangos-zero>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -255,7 +255,7 @@ void ReadLiquidTypeTableDBC()
 
 // Map file format data
 static char const* MAP_MAGIC         = "MAPS";
-static char const* MAP_VERSION_MAGIC = "10.2";
+static char const* MAP_VERSION_MAGIC = "w0.6";
 static char const* MAP_AREA_MAGIC    = "AREA";
 static char const* MAP_HEIGHT_MAGIC  = "MHGT";
 static char const* MAP_LIQUID_MAGIC  = "MLIQ";
@@ -1003,7 +1003,6 @@ int main(int argc, char * arg[])
     if (CONF_extract & EXTRACT_DBC)
         ExtractDBCFiles();
 
-    // Extract maps
     if (CONF_extract & EXTRACT_MAP)
         ExtractMapsFromMpq();
 
