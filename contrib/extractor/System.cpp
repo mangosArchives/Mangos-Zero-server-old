@@ -967,19 +967,18 @@ int main(int argc, char * arg[])
 
     HandleArgs(argc, arg);
 
-    // Open MPQs
+    // Open MPQ archives
     LoadCommonMPQFiles();
 
-
-    // Extract dbc
+    // Extract DBC files
     if (CONF_extract & EXTRACT_DBC)
-		ExtractDBCFiles();
+        ExtractDBCFiles();
 
     // Extract maps
     if (CONF_extract & EXTRACT_MAP)
         ExtractMapsFromMpq();
 
-    // Close MPQs
+    // Close MPQ archives
     CloseMPQFiles();
 
     return 0;
