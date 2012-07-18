@@ -21,17 +21,19 @@
 
 #include <stdio.h>
 #include <deque>
+#include <map>
 #include <set>
 #include <cstdlib>
 
 #ifdef WIN32
 #include "direct.h"
+#include <windows.h>
 #else
+#include <dirent.h>
 #include <sys/stat.h>
 #endif
 
 #include "dbcfile.h"
-#include "mpq_libmpq.h"
 
 #include "loadlib/adt.h"
 #include "loadlib/wdt.h"
@@ -56,7 +58,6 @@
 #else
     #define OPEN_FLAGS (O_RDONLY | O_BINARY)
 #endif
-extern ArchiveSet gOpenArchives;
 
 typedef struct
 {
@@ -179,6 +180,22 @@ void HandleArgs(int argc, char * arg[])
                 break;
         }
     }
+}
+
+void AppendDBCFileListTo(HANDLE mpqHandle, std::set<std::string>& filelist)
+{
+    SFILE_FIND_DATA findFileData;
+
+    HANDLE searchHandle = SFileFindFirstFile(mpqHandle, "*.dbc", &findFileData, NULL);
+    if (!searchHandle)
+        return;
+
+    filelist.insert(findFileData.cFileName);
+
+    while (SFileFindNextFile(searchHandle, &findFileData))
+        filelist.insert(findFileData.cFileName);
+
+    SFileFindClose(searchHandle);
 }
 
 uint32 ReadMapDBC()
@@ -344,7 +361,7 @@ bool ConvertADT(char *filename, char *filename2, int cell_y, int cell_x)
 {
     ADT_file adt;
 
-    if (!adt.loadFile(filename))
+    if (!adt.loadFile(filename, false))
         return false;
 
     adt_MCIN *cells = adt.a_grid->getMCIN();
@@ -893,22 +910,6 @@ void ExtractMapsFromMpq()
     delete [] map_ids;
 }
 
-bool ExtractFile( char const* mpq_name, std::string const& filename )
-{
-    FILE *output = fopen(filename.c_str(), "wb");
-    if(!output)
-    {
-        printf("Can't create the output file '%s'\n", filename.c_str());
-        return false;
-    }
-    MPQFile m(mpq_name);
-    if(!m.isEof())
-        fwrite(m.getPointer(), 1, m.getSize(), output);
-
-    fclose(output);
-    return true;
-}
-
 void ExtractDBCFiles()
 {
     printf("Extracting dbc files...\n");
@@ -916,14 +917,9 @@ void ExtractDBCFiles()
     std::set<std::string> dbcfiles;
 
     // get DBC file list
-    for(ArchiveSet::iterator i = gOpenArchives.begin(); i != gOpenArchives.end();++i)
-    {
-        vector<string> files;
-        (*i)->GetFileListTo(files);
-        for (vector<string>::iterator iter = files.begin(); iter != files.end(); ++iter)
-            if (iter->rfind(".dbc") == iter->length() - strlen(".dbc"))
-                    dbcfiles.insert(*iter);
-    }
+    ArchiveSetBounds archives = GetArchivesBounds();
+    for(ArchiveSet::const_iterator i = archives.first; i != archives.second;++i)
+        AppendDBCFileListTo(*i, dbcfiles);
 
     std::string path = output_path;
     path += "/dbc/";
@@ -931,9 +927,9 @@ void ExtractDBCFiles()
 
     // extract DBCs
     int count = 0;
-    for (set<string>::iterator iter = dbcfiles.begin(); iter != dbcfiles.end(); ++iter)
+    for (std::set<std::string>::iterator iter = dbcfiles.begin(); iter != dbcfiles.end(); ++iter)
     {
-        string filename = path;
+        std::string filename = path;
         filename += (iter->c_str() + strlen("DBFilesClient\\"));
 
         if(ExtractFile(iter->c_str(), filename))
@@ -946,18 +942,17 @@ void LoadCommonMPQFiles()
 {
     char filename[512];
     int count = sizeof(CONF_mpq_list)/sizeof(char*);
+    HANDLE worldMpqHandle;
     for(int i = 0; i < count; ++i)
     {
         sprintf(filename, "%s/Data/%s", input_path, CONF_mpq_list[i]);
-        if(FileExists(filename))
-            new MPQArchive(filename);
-    }
-}
 
-inline void CloseMPQFiles()
-{
-    for(ArchiveSet::iterator j = gOpenArchives.begin(); j != gOpenArchives.end();++j) (*j)->close();
-        gOpenArchives.clear();
+        if (!OpenArchive(filename, &worldMpqHandle))
+        {
+            printf("Error open archive: %s\n\n", filename);
+        }
+    }
+
 }
 
 int main(int argc, char * arg[])
@@ -979,7 +974,7 @@ int main(int argc, char * arg[])
         ExtractMapsFromMpq();
 
     // Close MPQ archives
-    CloseMPQFiles();
+    CloseArchives();
 
     return 0;
 }

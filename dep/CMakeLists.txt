@@ -24,3 +24,4 @@ if(NOT ACE_USE_EXTERNAL)
 endif()
 
 add_subdirectory(src)
+add_subdirectory(StormLib)

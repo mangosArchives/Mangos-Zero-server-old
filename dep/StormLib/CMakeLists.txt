@@ -231,9 +231,9 @@ set(ZLIB_BZIP2_FILES
            src/zlib/zutil.c
 )
 
-set(TEST_SRC_FILES
-           test/Test.cpp
-)
+# set(TEST_SRC_FILES
+#            test/Test.cpp
+# )
 
 add_definitions(-D_7ZIP_ST -DBZ_STRICT_ANSI)
 
@@ -268,18 +268,18 @@ endif()
 add_library(storm SHARED ${SRC_FILES} ${SRC_ADDITIONAL_FILES})
 target_link_libraries(storm ${LINK_LIBS})
 
-option(WITH_TEST "Compile Test application" OFF)
-if(WITH_TEST)
-     add_executable(storm_test ${TEST_SRC_FILES})
-     target_link_libraries(storm_test storm)
-endif()
+# option(WITH_TEST "Compile Test application" OFF)
+# if(WITH_TEST)
+#      add_executable(storm_test ${TEST_SRC_FILES})
+#      target_link_libraries(storm_test storm)
+# endif()
 
-option(WITH_STATIC "Compile static linked library" OFF)
-if(WITH_STATIC)
-    add_library(StormLib_static STATIC ${SRC_FILES} ${SRC_ADDITIONAL_FILES})
-    target_link_libraries(StormLib_static ${LINK_LIBS})
-    set_target_properties(StormLib_static PROPERTIES OUTPUT_NAME StormLib)
-endif()
+# option(WITH_STATIC "Compile static linked library" OFF)
+# if(WITH_STATIC)
+#     add_library(StormLib_static STATIC ${SRC_FILES} ${SRC_ADDITIONAL_FILES})
+#     target_link_libraries(StormLib_static ${LINK_LIBS})
+#     set_target_properties(StormLib_static PROPERTIES OUTPUT_NAME StormLib)
+# endif()
 
 if(APPLE)
     set_target_properties(storm PROPERTIES FRAMEWORK true)

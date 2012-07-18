@@ -15,6 +15,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+include_directories (
+    ${CMAKE_SOURCE_DIR}/dep/StormLib/src
+)
+
 add_library (loadlib loadlib.cpp  adt.cpp  wdt.cpp)
 # link loadlib with zlib
 target_link_libraries (loadlib z)
