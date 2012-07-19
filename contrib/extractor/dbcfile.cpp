@@ -19,26 +19,37 @@
 
 #define _CRT_SECURE_NO_DEPRECATE
 
+#include <cstdio>
+
 #include "dbcfile.h"
 #include "mpq_libmpq.h"
 
-DBCFile::DBCFile(const std::string &filename):
-    filename(filename),
-    data(0)
+DBCFile::DBCFile(const std::string &filename) : filename(filename)
 {
-
+    data = NULL;
 }
+
 bool DBCFile::open()
 {
     MPQFile f(filename.c_str());
     char header[4];
     unsigned int na,nb,es,ss;
 
+    // Need some error checking, otherwise an unhandled exception error occurs
+    // if people screw with the data path.
+    if (f.isEof() == true)
+        return false;
+
     if(f.read(header,4)!=4)                                 // Number of records
         return false;
 
-    if(header[0]!='W' || header[1]!='D' || header[2]!='B' || header[3]!='C')
+    if (header[0]!='W' || header[1]!='D' || header[2]!='B' || header[3] != 'C')
+    {
+        f.close();
+        data = NULL;
+        printf("Critical Error: An error occured while trying to read the DBCFile %s.", filename.c_str());
         return false;
+    }
 
     if(f.read(&na,4)!=4)                                    // Number of records
         return false;
@@ -65,6 +76,7 @@ bool DBCFile::open()
     f.close();
     return true;
 }
+
 DBCFile::~DBCFile()
 {
     delete [] data;
@@ -94,6 +106,7 @@ DBCFile::Iterator DBCFile::begin()
     assert(data);
     return Iterator(*this, data);
 }
+
 DBCFile::Iterator DBCFile::end()
 {
     assert(data);

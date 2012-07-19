@@ -17,12 +17,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#define _CRT_SECURE_NO_DEPRECATE
+
+#include <cstdio>
+
 #include "dbcfile.h"
 #include "mpq_libmpq04.h"
 #undef min
 #undef max
-
-#include <cstdio>
 
 DBCFile::DBCFile(const std::string &filename) : filename(filename)
 {
@@ -32,16 +34,16 @@ DBCFile::DBCFile(const std::string &filename) : filename(filename)
 bool DBCFile::open()
 {
     MPQFile f(filename.c_str());
+    char header[4];
+    unsigned int na,nb,es,ss;
 
     // Need some error checking, otherwise an unhandled exception error occurs
     // if people screw with the data path.
     if (f.isEof() == true)
         return false;
 
-    unsigned char header[4];
-    unsigned int na,nb,es,ss;
-
-    f.read(header,4); // File Header
+    if(f.read(header,4)!=4)                                 // Number of records
+        return false;
 
     if (header[0]!='W' || header[1]!='D' || header[2]!='B' || header[3] != 'C')
     {
@@ -51,23 +53,28 @@ bool DBCFile::open()
         return false;
     }
 
-    //assert(header[0]=='W' && header[1]=='D' && header[2]=='B' && header[3] == 'C');
-
-    f.read(&na,4); // Number of records
-    f.read(&nb,4); // Number of fields
-    f.read(&es,4); // Size of a record
-    f.read(&ss,4); // String size
+    if(f.read(&na,4)!=4)                                    // Number of records
+        return false;
+    if(f.read(&nb,4)!=4)                                    // Number of fields
+        return false;
+    if(f.read(&es,4)!=4)                                    // Size of a record
+        return false;
+    if(f.read(&ss,4)!=4)                                    // String size
+        return false;
 
     recordSize = es;
     recordCount = na;
     fieldCount = nb;
     stringSize = ss;
-    //assert(fieldCount*4 == recordSize);
-    assert(fieldCount*4 >= recordSize);
+    if(fieldCount*4 != recordSize)
+        return false;
 
     data = new unsigned char[recordSize*recordCount+stringSize];
     stringTable = data + recordSize*recordCount;
-    f.read(data,recordSize*recordCount+stringSize);
+
+    size_t data_size = recordSize*recordCount+stringSize;
+    if(f.read(data,data_size)!=data_size)
+        return false;
     f.close();
     return true;
 }
@@ -81,6 +88,19 @@ DBCFile::Record DBCFile::getRecord(size_t id)
 {
     assert(data);
     return Record(*this, data + id*recordSize);
+}
+
+size_t DBCFile::getMaxId()
+{
+    assert(data);
+
+    size_t maxId = 0;
+    for(size_t i = 0; i < getRecordCount(); ++i)
+    {
+        if(maxId < getRecord(i).getUInt(0))
+            maxId = getRecord(i).getUInt(0);
+    }
+    return maxId;
 }
 
 DBCFile::Iterator DBCFile::begin()

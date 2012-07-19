@@ -46,15 +46,12 @@ public:
     private:
         std::string message;
     };
-
-    //
     class NotFound: public Exception
     {
     public:
         NotFound(): Exception("Key was not found")
         { }
     };
-
     // Iteration over database
     class Iterator;
     class Record
@@ -103,7 +100,6 @@ public:
         friend class DBCFile;
         friend class Iterator;
     };
-
     /* Iterator that iterates over records */
     class Iterator
     {
@@ -142,7 +138,7 @@ public:
     /// Trivial
     size_t getRecordCount() const { return recordCount;}
     size_t getFieldCount() const { return fieldCount; }
-
+    size_t getMaxId();
 private:
     std::string filename;
     size_t recordSize;
