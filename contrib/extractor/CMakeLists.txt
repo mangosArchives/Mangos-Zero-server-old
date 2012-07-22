@@ -19,12 +19,12 @@ add_subdirectory (loadlib)
 
 include_directories (
     ${CMAKE_SOURCE_DIR}/dep/StormLib/src
-    ${MANGOS_MAP_EXTRACTOR_SOURCE_DIR}/loadlib
+    ${CMAKE_SOURCE_DIR}/contrib/extractor/loadlib
 )
 
 link_directories (
     ${CMAKE_SOURCE_DIR}/dep/StormLib
-    ${MANGOS_MAP_EXTRACTOR_SOURCE_DIR}/loadlib
+    ${CMAKE_SOURCE_DIR}/contrib/extractor/loadlib
 )
 
 add_executable (ad dbcfile.cpp System.cpp)
