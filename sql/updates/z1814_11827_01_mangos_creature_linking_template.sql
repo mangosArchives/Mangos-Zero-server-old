@@ -1,4 +1,4 @@
-ALTER TABLE db_version CHANGE COLUMN required_z1807_xxxxx_01_mangos_spell_proc_event required_z1814_11827_01_mangos_creature_linking_template bit;
+ALTER TABLE db_version CHANGE COLUMN required_z1809_xxxxx_01_mangos_spell_affect_event required_z1814_11827_01_mangos_creature_linking_template bit;
 
 DROP TABLE IF EXISTS creature_linking_template;
 CREATE TABLE creature_linking_template (
