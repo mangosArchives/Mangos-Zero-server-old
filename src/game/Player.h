@@ -130,7 +130,7 @@ struct SpellModifier
     int32 value;
     ClassFamilyMask mask;
     uint32 spellId;
-    Spell const* lastAffected;                              // mark last charge user, used for cleanup delayed remove spellmods at spell success or restore charges at cast fail (Is one pointer only need for cases mixed castes?)
+    Spell const* lastAffected;
 };
 
 typedef std::list<SpellModifier*> SpellModList;
@@ -1402,8 +1402,7 @@ class MANGOS_DLL_SPEC Player : public Unit
         template <class T> T ApplySpellMod(uint32 spellId, SpellModOp op, T &basevalue, Spell const* spell = NULL);
         SpellModifier* GetSpellMod(SpellModOp op, uint32 spellId) const;
         void RemoveSpellMods(Spell const* spell);
-        void ResetSpellModsDueToCanceledSpell (Spell const* spell);
-		
+
         static uint32 const infinityCooldownDelay = MONTH;  // used for set "infinity cooldowns" for spells and check
         static uint32 const infinityCooldownDelayCheck = MONTH/2;
         bool HasSpellCooldown(uint32 spell_id) const
@@ -2358,23 +2357,16 @@ template <class T> T Player::ApplySpellMod(uint32 spellId, SpellModOp op, T &bas
             totalpct += mod->value;
         }
 
-        if (mod->charges > 0)
+        if (mod->charges > 0 )
         {
-            if (!spell)
-                spell = FindCurrentSpellBySpellId(spellId);
-
-            // avoid double use spellmod charge by same spell
-            if (!mod->lastAffected || mod->lastAffected != spell)
+            --mod->charges;
+            if (mod->charges == 0)
             {
-                --mod->charges;
-
-                if (mod->charges == 0)
-                {
-                    mod->charges = -1;
-                    ++m_SpellModRemoveCount;
-                }
-
+                mod->charges = -1;
                 mod->lastAffected = spell;
+                if(!mod->lastAffected)
+                    mod->lastAffected = FindCurrentSpellBySpellId(spellId);
+                ++m_SpellModRemoveCount;
             }
         }
     }
