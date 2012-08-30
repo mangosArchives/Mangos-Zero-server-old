@@ -3622,7 +3622,7 @@ bool Player::HasActiveSpell(uint32 spell) const
         itr->second.active && !itr->second.disabled);
 }
 
-TrainerSpellState Player::GetTrainerSpellState(TrainerSpell const* trainer_spell) const
+TrainerSpellState Player::GetTrainerSpellState(TrainerSpell const* trainer_spell, uint32 reqLevel) const
 {
     if (!trainer_spell)
         return TRAINER_SPELL_RED;
@@ -3644,7 +3644,7 @@ TrainerSpellState Player::GetTrainerSpellState(TrainerSpell const* trainer_spell
         return TRAINER_SPELL_RED;
 
     // check level requirement
-    uint32 spellLevel = trainer_spell->reqLevel ? trainer_spell->reqLevel : TriggerSpell->spellLevel;
+    uint32 spellLevel = reqLevel ? reqLevel : TriggerSpell->spellLevel;
     if(getLevel() < spellLevel)
         return TRAINER_SPELL_RED;
 
@@ -16230,10 +16230,10 @@ SpellModifier* Player::GetSpellMod(SpellModOp op, uint32 spellId) const
 
 void Player::RemoveSpellMods(Spell const* spell)
 {
-    if(!spell || (m_SpellModRemoveCount == 0))
+    if (!spell || (m_SpellModRemoveCount == 0))
         return;
 
-    for(int i=0;i<MAX_SPELLMOD;++i)
+    for(int i = 0; i < MAX_SPELLMOD; ++i)
     {
         for (SpellModList::const_iterator itr = m_spellMods[i].begin(); itr != m_spellMods[i].end();)
         {
@@ -16248,6 +16248,31 @@ void Player::RemoveSpellMods(Spell const* spell)
                 else
                     itr = m_spellMods[i].begin();
             }
+        }
+    }
+}
+
+void Player::ResetSpellModsDueToCanceledSpell (Spell const* spell)
+{
+    for(int i = 0; i < MAX_SPELLMOD; ++i )
+    {
+        for (SpellModList::const_iterator itr = m_spellMods[i].begin(); itr != m_spellMods[i].end(); ++itr)
+        {
+            SpellModifier *mod = *itr;
+
+            if (mod->lastAffected != spell)
+                continue;
+
+            mod->lastAffected = NULL;
+
+            if (mod->charges == -1)
+            {
+                mod->charges = 1;
+                if (m_SpellModRemoveCount > 0)
+                    --m_SpellModRemoveCount;
+            }
+            else if (mod->charges > 0)
+                ++mod->charges;
         }
     }
 }
