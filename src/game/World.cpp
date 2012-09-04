@@ -32,8 +32,6 @@
 #include "WorldPacket.h"
 #include "Weather.h"
 #include "Player.h"
-#include "SkillExtraItems.h"
-#include "SkillDiscovery.h"
 #include "AccountMgr.h"
 #include "AuctionHouseMgr.h"
 #include "ObjectMgr.h"
@@ -1076,12 +1074,6 @@ void World::SetInitialWorldSettings()
     LoadLootTables();
     sLog.outString( ">>> Loot Tables loaded" );
     sLog.outString();
-
-    sLog.outString( "Loading Skill Discovery Table..." );
-    LoadSkillDiscoveryTable();
-
-    sLog.outString( "Loading Skill Extra Item Table..." );
-    LoadSkillExtraItemTable();
 
     sLog.outString( "Loading Skill Fishing base level requirements..." );
     sObjectMgr.LoadFishingBaseSkillLevel();
