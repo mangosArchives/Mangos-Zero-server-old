@@ -117,6 +117,11 @@ CreatureEventAI::CreatureEventAI(Creature *c ) : CreatureAI(c)
                 ProcessEvent(*i);
     }
     Reset();
+	
+    // Roll Chance for Rare Spawn to be Spawned
+    const CreatureInfo* cInfo = m_creature->GetCreatureInfo();
+    if ((cInfo->rank == 2 || cInfo->rank == 4) && m_creature->GetMapId() < 2 && urand(0,100) < 50)
+        m_creature->ForcedDespawn(1);
 }
 
 bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, Unit* pActionInvoker)

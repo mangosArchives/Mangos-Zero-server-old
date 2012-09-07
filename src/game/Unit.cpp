@@ -5399,7 +5399,7 @@ uint32 Unit::SpellDamageBonusDone(Unit *pVictim, SpellEntry const *spellProto, u
     for(AuraList::const_iterator i = mDamageDoneCreature.begin();i != mDamageDoneCreature.end(); ++i)
     {
         if(creatureTypeMask & uint32((*i)->GetModifier()->m_miscvalue))
-            DoneTotalMod += ((*i)->GetModifier()->m_amount+100.0f)/100.0f;
+            DoneTotal += ((*i)->GetModifier()->m_amount);
     }
 
     // done scripted mod (take it from owner)
@@ -6577,11 +6577,15 @@ bool Unit::isVisibleForOrDetect(Unit const* u, WorldObject const* viewPoint, boo
     //Calculation if target is in front
 
     //Visible distance based on stealth value (stealth rank 4 300MOD, 10.5 - 3 = 7.5)
-    visibleDistance = 10.5f - (GetTotalAuraModifier(SPELL_AURA_MOD_STEALTH)/100.0f);
+    visibleDistance = 7.5f + getLevel()/20.0f - GetTotalAuraModifier(SPELL_AURA_MOD_STEALTH)/100.0f;
 
     //Visible distance is modified by
     //-Level Diff (every level diff = 1.0f in visible distance)
-    visibleDistance += int32(u->GetLevelForTarget(this)) - int32(GetLevelForTarget(u));
+    int32 level_diff = int32(u->GetLevelForTarget(this)) - int32(GetLevelForTarget(u));
+    if (abs(level_diff) > 3)
+        visibleDistance += level_diff;
+    else
+        visibleDistance += 0.5f*level_diff;
 
     //This allows to check talent tree and will add addition stealth dependent on used points)
     int32 stealthMod = GetTotalAuraModifier(SPELL_AURA_MOD_STEALTH_LEVEL);
@@ -6594,8 +6598,26 @@ bool Unit::isVisibleForOrDetect(Unit const* u, WorldObject const* viewPoint, boo
     visibleDistance = visibleDistance > MAX_PLAYER_STEALTH_DETECT_RANGE ? MAX_PLAYER_STEALTH_DETECT_RANGE : visibleDistance;
 
     // recheck new distance
-    if(visibleDistance <= 0 || !IsWithinDist(viewPoint,visibleDistance))
+    if(visibleDistance <= 0)
         return false;
+
+    if (!IsWithinDist(viewPoint,visibleDistance))
+    {
+        if (GetDistance(viewPoint) - visibleDistance <= 1.0f)
+        {
+            if (Creature* C = (Creature*)u)
+            {
+                float angle = C->GetAngle(this);
+
+                C->clearUnitState(UNIT_STAT_MOVING);
+                C->SetOrientation(angle);
+                C->SendMonsterMove(C->GetPositionX(), C->GetPositionY(), C->GetPositionZ(), SPLINETYPE_FACINGANGLE, SPLINEFLAG_WALKMODE, 0, NULL, angle);
+
+                C->GetMotionMaster()->MoveDistract(3000);
+            }
+        }
+        return false;
+    }
 
     // Now check is target visible with LoS
     float ox,oy,oz;
@@ -7050,11 +7072,14 @@ void Unit::TauntApply(Unit* taunter)
     if (target && target == taunter)
         return;
 
+    if (!HasAuraType(SPELL_AURA_MOD_FEAR) && !HasAuraType(SPELL_AURA_MOD_CONFUSE))
+    {
     SetInFront(taunter);
 
     if (((Creature*)this)->AI())
         ((Creature*)this)->AI()->AttackStart(taunter);
-
+    }
+	
     m_ThreatManager.tauntApply(taunter);
 }
 
@@ -7092,7 +7117,7 @@ void Unit::TauntFadeOut(Unit *taunter)
     m_ThreatManager.tauntFadeOut(taunter);
     target = m_ThreatManager.getHostileTarget();
 
-    if (target && target != taunter)
+    if (target && target != taunter && !HasAuraType(SPELL_AURA_MOD_FEAR) && !HasAuraType(SPELL_AURA_MOD_CONFUSE))
     {
         SetInFront(target);
 
@@ -7155,7 +7180,8 @@ bool Unit::SelectHostileTarget()
 
     if (target)
     {
-        if (!hasUnitState(UNIT_STAT_STUNNED | UNIT_STAT_DIED))
+        if (!hasUnitState(UNIT_STAT_STUNNED | UNIT_STAT_DIED) &&
+            !HasAuraType(SPELL_AURA_MOD_FEAR) && !HasAuraType(SPELL_AURA_MOD_CONFUSE))
         {
             SetInFront(target);
             ((Creature*)this)->AI()->AttackStart(target);

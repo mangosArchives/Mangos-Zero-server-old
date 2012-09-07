@@ -941,7 +941,7 @@ void Player::HandleDrowning(uint32 time_diff)
             // Timer limit - need deal damage
             if (m_MirrorTimer[BREATH_TIMER] < 0)
             {
-                m_MirrorTimer[BREATH_TIMER]+= 1*IN_MILLISECONDS;
+                m_MirrorTimer[BREATH_TIMER]+= 2 * IN_MILLISECONDS;
                 // Calculate and deal damage
                 // TODO: Check this formula
                 uint32 damage = GetMaxHealth() / 5 + urand(0, getLevel()-1);
@@ -978,7 +978,7 @@ void Player::HandleDrowning(uint32 time_diff)
             // Timer limit - need deal damage or teleport ghost to graveyard
             if (m_MirrorTimer[FATIGUE_TIMER] < 0)
             {
-                m_MirrorTimer[FATIGUE_TIMER]+= 1*IN_MILLISECONDS;
+                m_MirrorTimer[FATIGUE_TIMER]+= 2 * IN_MILLISECONDS;
                 if (isAlive())                                            // Calculate and deal damage
                 {
                     uint32 damage = GetMaxHealth() / 5 + urand(0, getLevel()-1);
@@ -1013,7 +1013,7 @@ void Player::HandleDrowning(uint32 time_diff)
             m_MirrorTimer[FIRE_TIMER]-=time_diff;
             if (m_MirrorTimer[FIRE_TIMER] < 0)
             {
-                m_MirrorTimer[FIRE_TIMER]+= 1*IN_MILLISECONDS;
+                m_MirrorTimer[FIRE_TIMER]+= 2 * IN_MILLISECONDS;
                 // Calculate and deal damage
                 // TODO: Check this formula
                 uint32 damage = urand(600, 700);
@@ -11042,8 +11042,32 @@ void Player::ApplyEnchantment(Item *item, EnchantmentSlot slot, bool apply, bool
 
             switch(enchant_display_type)
             {
-                case ITEM_ENCHANTMENT_TYPE_NONE:
+                case ITEM_ENCHANTMENT_TYPE_NONE:  // Shaman Rockbiter Weapon
+                {
+                    if(getClass() == CLASS_SHAMAN)
+                    {
+                        uint32 spellId = 0;
+                        switch (pEnchant->ID)
+                        {
+                            case 29: spellId = 10400; break;   // Rank 1
+                            case 6: spellId = 15567; break;    // Rank 2
+                            case 1: spellId = 15568; break;    // Rank 3
+                            case 503: spellId = 15569; break;  // Rank 4
+                            case 1663: spellId = 16311; break; // Rank 5
+                            case 683: spellId = 16312; break;  // Rank 6
+                            case 1664: spellId = 16313; break; // Rank 7
+                            default: break;
+                        }
+                        if (spellId)
+                        {
+                            if (apply)
+                                CastSpell(this,spellId,true);
+                            else
+                                RemoveAurasDueToSpell(spellId);
+                        }
+                    }
                     break;
+                }
                 case ITEM_ENCHANTMENT_TYPE_COMBAT_SPELL:
                     // processed in Player::CastItemCombatSpell
                     break;
@@ -11133,24 +11157,9 @@ void Player::ApplyEnchantment(Item *item, EnchantmentSlot slot, bool apply, bool
                     }
                     break;
                 }
-                case ITEM_ENCHANTMENT_TYPE_TOTEM:           // Shaman Rockbiter Weapon
-                {
-                    if(getClass() == CLASS_SHAMAN)
-                    {
-                        float addValue = 0.0f;
-                        if(item->GetSlot() == EQUIPMENT_SLOT_MAINHAND)
-                        {
-                            addValue = float(enchant_amount * item->GetProto()->Delay / 1000.0f);
-                            HandleStatModifier(UNIT_MOD_DAMAGE_MAINHAND, TOTAL_VALUE, addValue, apply);
-                        }
-                        else if(item->GetSlot() == EQUIPMENT_SLOT_OFFHAND )
-                        {
-                            addValue = float(enchant_amount * item->GetProto()->Delay / 1000.0f);
-                            HandleStatModifier(UNIT_MOD_DAMAGE_OFFHAND, TOTAL_VALUE, addValue, apply);
-                        }
-                    }
+                case ITEM_ENCHANTMENT_TYPE_TOTEM:
                     break;
-                }
+
                 default:
                     sLog.outError("Unknown item enchantment (id = %d) display type: %d", enchant_id, enchant_display_type);
                     break;
