@@ -2241,7 +2241,7 @@ MeleeHitOutcome Unit::RollMeleeOutcomeAgainst (const Unit *pVictim, WeaponAttack
         int32 maxskill = attackerMaxSkillValueForLevel;
         skill = (skill > maxskill) ? maxskill : skill;
 
-        tmp = (10 + 2*(victimDefenseSkill - skill)) * 100;
+        tmp = (10 + (victimDefenseSkill - skill)) * 100;
         tmp = tmp > 4000 ? 4000 : tmp;
         if (roll < (sum += tmp))
         {
@@ -7050,11 +7050,14 @@ void Unit::TauntApply(Unit* taunter)
     if (target && target == taunter)
         return;
 
+    if (!HasAuraType(SPELL_AURA_MOD_FEAR) && !HasAuraType(SPELL_AURA_MOD_CONFUSE))
+    {
     SetInFront(taunter);
 
     if (((Creature*)this)->AI())
         ((Creature*)this)->AI()->AttackStart(taunter);
-
+    }
+	
     m_ThreatManager.tauntApply(taunter);
 }
 
@@ -7092,7 +7095,7 @@ void Unit::TauntFadeOut(Unit *taunter)
     m_ThreatManager.tauntFadeOut(taunter);
     target = m_ThreatManager.getHostileTarget();
 
-    if (target && target != taunter)
+    if (target && target != taunter && !HasAuraType(SPELL_AURA_MOD_FEAR) && !HasAuraType(SPELL_AURA_MOD_CONFUSE))
     {
         SetInFront(target);
 
@@ -7155,7 +7158,8 @@ bool Unit::SelectHostileTarget()
 
     if (target)
     {
-        if (!hasUnitState(UNIT_STAT_STUNNED | UNIT_STAT_DIED))
+        if (!hasUnitState(UNIT_STAT_STUNNED | UNIT_STAT_DIED) &&
+            !HasAuraType(SPELL_AURA_MOD_FEAR) && !HasAuraType(SPELL_AURA_MOD_CONFUSE))
         {
             SetInFront(target);
             ((Creature*)this)->AI()->AttackStart(target);
