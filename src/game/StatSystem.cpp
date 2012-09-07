@@ -283,10 +283,10 @@ void Player::UpdateAttackPowerAndDamage(bool ranged )
                 switch(form)
                 {
                     case FORM_CAT:
-                        val2 = getLevel()*(mLevelMult+2.0f) + GetStat(STAT_STRENGTH)*2.0f + GetStat(STAT_AGILITY) - 20.0f; break;
+                        val2 = getLevel()*mLevelMult + GetStat(STAT_STRENGTH)*2.0f + GetStat(STAT_AGILITY) - 20.0f; break;
                     case FORM_BEAR:
                     case FORM_DIREBEAR:
-                        val2 = getLevel()*(mLevelMult+3.0f) + GetStat(STAT_STRENGTH)*2.0f - 20.0f; break;
+                        val2 = getLevel()*mLevelMult + GetStat(STAT_STRENGTH)*2.0f - 20.0f; break;
                     case FORM_MOONKIN:
                         val2 = getLevel()*(mLevelMult+1.5f) + GetStat(STAT_STRENGTH)*2.0f - 20.0f; break;
                     default:
@@ -532,7 +532,7 @@ void Player::UpdateAllSpellCritChances()
 void Player::UpdateManaRegen()
 {
     // Mana regen from spirit
-    float power_regen = OCTRegenMPPerSpirit() / 2.0f;
+    float power_regen = OCTRegenMPPerSpirit();
     // Apply PCT bonus from SPELL_AURA_MOD_POWER_REGEN_PERCENT aura on spirit base regen
     power_regen *= GetTotalAuraMultiplierByMiscValue(SPELL_AURA_MOD_POWER_REGEN_PERCENT, POWER_MANA);
 
