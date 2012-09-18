@@ -122,11 +122,11 @@ void WaypointMovementGenerator<Creature>::OnArrived(Creature& creature)
             creature.SetDisplayId(behavior->model1);
 
         if (behavior->textid[0])
-		{
+        {
             // Not only one text is set
             if (behavior->textid[1])
             {
-			    // Select one from max 5 texts (0 and 1 already checked)
+                // Select one from max 5 texts (0 and 1 already checked)
                 int i = 2;
                 for(; i < MAX_WAYPOINT_TEXT; ++i)
                 {
@@ -165,7 +165,7 @@ void WaypointMovementGenerator<Creature>::StartMove(Creature &creature)
         i_currentNode = (i_currentNode+1) % i_path->size();
 
     m_isArrivalDone = false;
-	
+
     if (creature.CanFly())
         creature.AddSplineFlag(SPLINEFLAG_FLYING);
     creature.addUnitState(UNIT_STAT_ROAMING_MOVE);

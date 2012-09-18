@@ -153,7 +153,7 @@ bool RandomMovementGenerator<Creature>::Update(Creature &creature, const uint32 
             return true;                                // not expire now, but already lost
     }
 
-	i_nextMoveTime.Update(diff);
+    i_nextMoveTime.Update(diff);
     if (i_nextMoveTime.Passed())
         _setRandomLocation(creature);
 

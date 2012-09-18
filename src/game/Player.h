@@ -1403,7 +1403,7 @@ class MANGOS_DLL_SPEC Player : public Unit
         SpellModifier* GetSpellMod(SpellModOp op, uint32 spellId) const;
         void RemoveSpellMods(Spell const* spell);
         void ResetSpellModsDueToCanceledSpell (Spell const* spell);
-		
+
         static uint32 const infinityCooldownDelay = MONTH;  // used for set "infinity cooldowns" for spells and check
         static uint32 const infinityCooldownDelayCheck = MONTH/2;
         bool HasSpellCooldown(uint32 spell_id) const

@@ -2839,6 +2839,8 @@ bool Player::addSpell(uint32 spell_id, bool active, bool learning, bool dependen
                             itr2->second.active = false;
                             if(itr2->second.state != PLAYERSPELL_NEW)
                                 itr2->second.state = PLAYERSPELL_CHANGED;
+
+                            disabled = true;
                         }
                         else if(sSpellMgr.IsHighRankOfSpell(itr2->first,spell_id))
                         {

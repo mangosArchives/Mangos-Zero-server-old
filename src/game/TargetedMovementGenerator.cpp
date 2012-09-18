@@ -76,8 +76,8 @@ void TargetedMovementGeneratorMedium<T,D>::_setTargetLocation(T &owner)
             return;
     */
     if (owner.GetTypeId() == TYPEID_UNIT && ((Creature*)&owner)->CanFly())
-        ((Creature&)owner).AddSplineFlag(SPLINEFLAG_FLYING);	
- 
+        ((Creature&)owner).AddSplineFlag(SPLINEFLAG_FLYING);
+
     i_targetReached = false;
     i_recalculateTravel = false;
     D::_addUnitStateMove(owner);
@@ -156,7 +156,7 @@ bool TargetedMovementGeneratorMedium<T,D>::Update(T &owner, const uint32 & time_
             _setTargetLocation(owner);
     }
 
-	if (i_destinationHolder.HasArrived())
+    if (i_destinationHolder.HasArrived())
     {
         if (i_angle == 0.f && !owner.HasInArc(0.01f, i_target.getTarget()))
             owner.SetInFront(i_target.getTarget());

@@ -1258,7 +1258,9 @@ namespace MaNGOS
             {
                 char const* text = sObjectMgr.GetMangosString(i_textId,loc_idx);
 
-                WorldObject::BuildMonsterChat(&data, i_object.GetObjectGuid(), i_msgtype, text, i_language, i_object.GetNameForLocaleIdx(loc_idx), i_target ? i_target->GetObjectGuid() : ObjectGuid(), i_target ? i_target->GetNameForLocaleIdx(loc_idx) : "");
+                // TODO : Add support for localising emotes
+                if(i_msgtype != CHAT_MSG_MONSTER_EMOTE && i_msgtype != CHAT_TYPE_BOSS_EMOTE)
+                    WorldObject::BuildMonsterChat(&data, i_object.GetObjectGuid(), i_msgtype, text, i_language, i_object.GetNameForLocaleIdx(loc_idx), i_target ? i_target->GetObjectGuid() : ObjectGuid(), i_target ? i_target->GetNameForLocaleIdx(loc_idx) : "");
             }
 
         private:
@@ -1328,9 +1330,15 @@ void WorldObject::MonsterWhisper(int32 textId, Unit* target, bool IsBossWhisper)
 
 void WorldObject::BuildMonsterChat(WorldPacket *data, ObjectGuid senderGuid, uint8 msgtype, char const* text, uint32 language, char const* name, ObjectGuid targetGuid, char const* targetName)
 {
+    bool isEmote = false;
+
+    if(msgtype == CHAT_MSG_MONSTER_EMOTE || msgtype == CHAT_MSG_RAID_BOSS_EMOTE)
+        isEmote = true;
+
     *data << uint8(msgtype);
     *data << uint32(language);
-    *data << ObjectGuid(senderGuid);
+    if(!isEmote) //Sending this for CHAT_MSG_MONSTER_EMOTE breaks the packet
+        *data << uint64(senderGuid);
     *data << uint32(strlen(name)+1);
     *data << name;
     *data << ObjectGuid(targetGuid);                        // Unit Target
@@ -1339,7 +1347,9 @@ void WorldObject::BuildMonsterChat(WorldPacket *data, ObjectGuid senderGuid, uin
         *data << uint32(strlen(targetName)+1);              // target name length
         *data << targetName;                                // target name
     }
-    *data << (uint32)(strlen(text)+1);
+    *data << (uint32)(strlen(text)+1+(isEmote ? 3 : 0));
+    if(isEmote)
+        data->append("%s ", 3);
     *data << text;
     *data << (uint8)0;                                      // ChatTag
 }

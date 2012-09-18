@@ -704,7 +704,7 @@ class MANGOS_DLL_SPEC Creature : public Unit
         void SetVirtualItemRaw(VirtualItemSlot slot, uint32 display_id, uint32 info0, uint32 info1);
     protected:
         bool MeetsSelectAttackingRequirement(Unit* pTarget, SpellEntry const* pSpellInfo, uint32 selectFlags) const;
-		
+
         bool CreateFromProto(uint32 guidlow, CreatureInfo const* cinfo, Team team, const CreatureData *data = NULL, GameEventCreatureData const* eventData =NULL);
         bool InitEntry(uint32 entry, Team team=ALLIANCE, const CreatureData* data = NULL, GameEventCreatureData const* eventData = NULL);
 

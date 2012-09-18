@@ -2932,7 +2932,7 @@ void Spell::finish(bool ok)
     if (m_spellState == SPELL_STATE_FINISHED)
         return;
 
-		// remove/restore spell mods before m_spellState update
+        // remove/restore spell mods before m_spellState update
     if (Player* modOwner = m_caster->GetSpellModOwner())
     {
         if (ok || m_spellState != SPELL_STATE_PREPARING)    // fail after start channeling or throw to target not affect spell mods
@@ -5009,9 +5009,9 @@ SpellCastResult Spell::CheckRange(bool strict)
     switch(m_spellInfo->rangeIndex)
     {
         // self cast doesn't need range checking -- also for Starshards fix
-		// spells that can be cast anywhere also need no check
+        // spells that can be cast anywhere also need no check
         case SPELL_RANGE_IDX_SELF_ONLY:
-		case SPELL_RANGE_IDX_ANYWHERE:
+        case SPELL_RANGE_IDX_ANYWHERE:
             return SPELL_CAST_OK;
         // combat range spells are treated differently
         case SPELL_RANGE_IDX_COMBAT:
@@ -5557,8 +5557,8 @@ void Spell::Delayed()
     data << ObjectGuid(m_caster->GetObjectGuid());
     data << uint32(delaytime);
 
-	if (m_caster->GetTypeId() == TYPEID_PLAYER)
-		((Player*)m_caster)->SendDirectMessage(&data);
+    if (m_caster->GetTypeId() == TYPEID_PLAYER)
+        ((Player*)m_caster)->SendDirectMessage(&data);
 }
 
 void Spell::DelayedChannel()
