@@ -5,8 +5,7 @@ LEGAL NOTICE
 
 The terms and conditions of this license are described below:
 
-	Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
-	Copyright (C) 2009-2012 MaNGOSZero <https://github.com/mangos-zero>
+	Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
     
     mangos-zero-server is free software: you can redistribute it and/or
     modify it under the terms of the GNU General Public License as published by
@@ -29,4 +28,4 @@ you are making redistributable copies.
 CONTENT COPYRIGHT
 -----------------
 Game content is Copyright © 2004-2011 Blizzard Entertainment.  Other works in
-this repository is of authorship © 2005-2011 *MaNGOS*, and © 2005-2011 *MaNGOSZero*.
+this repository is of authorship © 2005-2012 *MaNGOS*.

@@ -1,5 +1,4 @@
-# Copyright (C) 2005-2011 MaNGOS <http://getmangos.com/>
-# Copyright (C) 2009-2012 MaNGOSZero <https://github.com/mangos-zero>
+# Copyright (C) 2005-2012 MaNGOS <http://getmangos.com/>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,4 +14,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-# add_subdirectory(scripts)
+# Uncomment once you have cloned https://github.com/mangos-zero/scriptdev0
+# into the scripts subdirectory.
+#add_subdirectory(scripts)
