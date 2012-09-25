@@ -26,9 +26,9 @@ class Unit;
 
 class MANGOS_DLL_SPEC FollowerReference : public Reference<Unit, TargetedMovementGeneratorBase>
 {
-    protected:
-        void targetObjectBuildLink();
-        void targetObjectDestroyLink();
-        void sourceObjectDestroyLink();
+protected:
+    void targetObjectBuildLink();
+    void targetObjectDestroyLink();
+    void sourceObjectDestroyLink();
 };
 #endif

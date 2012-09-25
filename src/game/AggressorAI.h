@@ -33,22 +33,22 @@ class MANGOS_DLL_DECL AggressorAI : public CreatureAI
         STATE_LOOK_AT_VICTIM = 2
     };
 
-    public:
+public:
 
-        explicit AggressorAI(Creature *c);
+    explicit AggressorAI(Creature *c);
 
-        void MoveInLineOfSight(Unit *);
-        void AttackStart(Unit *);
-        void EnterEvadeMode();
-        bool IsVisible(Unit *) const;
+    void MoveInLineOfSight(Unit *);
+    void AttackStart(Unit *);
+    void EnterEvadeMode();
+    bool IsVisible(Unit *) const;
 
-        void UpdateAI(const uint32);
-        static int Permissible(const Creature *);
+    void UpdateAI(const uint32);
+    static int Permissible(const Creature *);
 
-    private:
-        ObjectGuid i_victimGuid;
-        AggressorState i_state;
-        TimeTracker i_tracker;
+private:
+    ObjectGuid i_victimGuid;
+    AggressorState i_state;
+    TimeTracker i_tracker;
 };
 
 #endif

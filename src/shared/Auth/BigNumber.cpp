@@ -42,7 +42,7 @@ BigNumber::BigNumber(uint32 val)
 BigNumber::~BigNumber()
 {
     BN_free(_bn);
-    if(_array) delete[] _array;
+    if (_array) delete[] _array;
 }
 
 void BigNumber::SetDword(uint32 val)
@@ -162,7 +162,7 @@ uint32 BigNumber::AsDword()
 
 bool BigNumber::isZero() const
 {
-    return BN_is_zero(_bn)!=0;
+    return BN_is_zero(_bn) != 0;
 }
 
 uint8 *BigNumber::AsByteArray(int minSize)

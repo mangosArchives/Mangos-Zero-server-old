@@ -69,20 +69,21 @@ void LoadRandomEnchantmentsTable()
             chance = fields[2].GetFloat();
 
             if (chance > 0.000001f && chance <= 100.0f)
-                RandomItemEnch[entry].push_back( EnchStoreItem(ench, chance) );
+                RandomItemEnch[entry].push_back(EnchStoreItem(ench, chance));
 
             ++count;
-        } while (result->NextRow());
+        }
+        while (result->NextRow());
 
         delete result;
 
         sLog.outString();
-        sLog.outString( ">> Loaded %u Item Enchantment definitions", count );
+        sLog.outString(">> Loaded %u Item Enchantment definitions", count);
     }
     else
     {
         sLog.outString();
-        sLog.outErrorDb( ">> Loaded 0 Item Enchantment definitions. DB table `item_enchantment_template` is empty.");
+        sLog.outErrorDb(">> Loaded 0 Item Enchantment definitions. DB table `item_enchantment_template` is empty.");
     }
 }
 
@@ -94,14 +95,14 @@ uint32 GetItemEnchantMod(uint32 entry)
 
     if (tab == RandomItemEnch.end())
     {
-        sLog.outErrorDb("Item RandomProperty id #%u used in `item_template` but it doesn't have records in `item_enchantment_template` table.",entry);
+        sLog.outErrorDb("Item RandomProperty id #%u used in `item_template` but it doesn't have records in `item_enchantment_template` table.", entry);
         return 0;
     }
 
     double dRoll = rand_chance();
     float fCount = 0;
 
-    for(EnchStoreList::const_iterator ench_iter = tab->second.begin(); ench_iter != tab->second.end(); ++ench_iter)
+    for (EnchStoreList::const_iterator ench_iter = tab->second.begin(); ench_iter != tab->second.end(); ++ench_iter)
     {
         fCount += ench_iter->chance;
 
@@ -109,10 +110,10 @@ uint32 GetItemEnchantMod(uint32 entry)
     }
 
     //we could get here only if sum of all enchantment chances is lower than 100%
-    dRoll =  (irand(0, (int)floor(fCount * 100) + 1)) / 100;
+    dRoll = (irand(0, (int)floor(fCount * 100) + 1)) / 100;
     fCount = 0;
 
-    for(EnchStoreList::const_iterator ench_iter = tab->second.begin(); ench_iter != tab->second.end(); ++ench_iter)
+    for (EnchStoreList::const_iterator ench_iter = tab->second.begin(); ench_iter != tab->second.end(); ++ench_iter)
     {
         fCount += ench_iter->chance;
 

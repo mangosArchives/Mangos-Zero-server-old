@@ -26,19 +26,19 @@ class Unit;
 
 class MANGOS_DLL_DECL ReactorAI : public CreatureAI
 {
-    public:
+public:
 
-        explicit ReactorAI(Creature *c) : CreatureAI(c) {}
+    explicit ReactorAI(Creature *c) : CreatureAI(c) {}
 
-        void MoveInLineOfSight(Unit *);
-        void AttackStart(Unit *);
-        void EnterEvadeMode();
-        bool IsVisible(Unit *) const;
+    void MoveInLineOfSight(Unit *);
+    void AttackStart(Unit *);
+    void EnterEvadeMode();
+    bool IsVisible(Unit *) const;
 
-        void UpdateAI(const uint32);
-        static int Permissible(const Creature *);
+    void UpdateAI(const uint32);
+    static int Permissible(const Creature *);
 
-    private:
-        ObjectGuid i_victimGuid;
+private:
+    ObjectGuid i_victimGuid;
 };
 #endif

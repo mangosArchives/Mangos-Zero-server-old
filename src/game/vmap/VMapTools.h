@@ -33,13 +33,15 @@ The collision detection is modified to return true, if we are inside an object.
 namespace VMAP
 {
     template<class TValue>
-    class IntersectionCallBack {
+    class IntersectionCallBack
+    {
     public:
         TValue*      closestEntity;
         G3D::Vector3 hitLocation;
         G3D::Vector3 hitNormal;
 
-        void operator()(const G3D::Ray& ray, const TValue* entity, bool pStopAtFirstHit, float& distance) {
+        void operator()(const G3D::Ray& ray, const TValue* entity, bool pStopAtFirstHit, float& distance)
+        {
             entity->intersect(ray, distance, pStopAtFirstHit, hitLocation, hitNormal);
         }
     };

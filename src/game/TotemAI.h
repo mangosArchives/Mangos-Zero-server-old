@@ -28,21 +28,21 @@ class Totem;
 
 class MANGOS_DLL_DECL TotemAI : public CreatureAI
 {
-    public:
+public:
 
-        explicit TotemAI(Creature *c);
+    explicit TotemAI(Creature *c);
 
-        void MoveInLineOfSight(Unit *);
-        void AttackStart(Unit *);
-        void EnterEvadeMode();
-        bool IsVisible(Unit *) const;
+    void MoveInLineOfSight(Unit *);
+    void AttackStart(Unit *);
+    void EnterEvadeMode();
+    bool IsVisible(Unit *) const;
 
-        void UpdateAI(const uint32);
-        static int Permissible(const Creature *);
-    protected:
-        Totem& getTotem();
+    void UpdateAI(const uint32);
+    static int Permissible(const Creature *);
+protected:
+    Totem& getTotem();
 
-    private:
-        ObjectGuid i_victimGuid;
+private:
+    ObjectGuid i_victimGuid;
 };
 #endif

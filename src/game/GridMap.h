@@ -114,68 +114,68 @@ struct GridMapLiquidData
 
 class GridMap
 {
-    private:
+private:
 
-        uint32 m_flags;
+    uint32 m_flags;
 
-        // Area data
-        uint16 m_gridArea;
-        uint16 *m_area_map;
+    // Area data
+    uint16 m_gridArea;
+    uint16 *m_area_map;
 
-        // Height level data
-        float m_gridHeight;
-        float m_gridIntHeightMultiplier;
-        union
-        {
-            float *m_V9;
-            uint16 *m_uint16_V9;
-            uint8 *m_uint8_V9;
-        };
-        union
-        {
-            float *m_V8;
-            uint16 *m_uint16_V8;
-            uint8 *m_uint8_V8;
-        };
+    // Height level data
+    float m_gridHeight;
+    float m_gridIntHeightMultiplier;
+    union
+    {
+        float *m_V9;
+        uint16 *m_uint16_V9;
+        uint8 *m_uint8_V9;
+    };
+    union
+    {
+        float *m_V8;
+        uint16 *m_uint16_V8;
+        uint8 *m_uint8_V8;
+    };
 
-        // Liquid data
-        uint16 m_liquidType;
-        uint8 m_liquid_offX;
-        uint8 m_liquid_offY;
-        uint8 m_liquid_width;
-        uint8 m_liquid_height;
-        float m_liquidLevel;
-        uint8 *m_liquid_type;
-        float *m_liquid_map;
+    // Liquid data
+    uint16 m_liquidType;
+    uint8 m_liquid_offX;
+    uint8 m_liquid_offY;
+    uint8 m_liquid_width;
+    uint8 m_liquid_height;
+    float m_liquidLevel;
+    uint8 *m_liquid_type;
+    float *m_liquid_map;
 
-        bool loadAreaData(FILE *in, uint32 offset, uint32 size);
-        bool loadHeightData(FILE *in, uint32 offset, uint32 size);
-        bool loadGridMapLiquidData(FILE *in, uint32 offset, uint32 size);
+    bool loadAreaData(FILE *in, uint32 offset, uint32 size);
+    bool loadHeightData(FILE *in, uint32 offset, uint32 size);
+    bool loadGridMapLiquidData(FILE *in, uint32 offset, uint32 size);
 
-        // Get height functions and pointers
-        typedef float (GridMap::*pGetHeightPtr) (float x, float y) const;
-        pGetHeightPtr m_gridGetHeight;
-        float getHeightFromFloat(float x, float y) const;
-        float getHeightFromUint16(float x, float y) const;
-        float getHeightFromUint8(float x, float y) const;
-        float getHeightFromFlat(float x, float y) const;
+    // Get height functions and pointers
+    typedef float(GridMap::*pGetHeightPtr)(float x, float y) const;
+    pGetHeightPtr m_gridGetHeight;
+    float getHeightFromFloat(float x, float y) const;
+    float getHeightFromUint16(float x, float y) const;
+    float getHeightFromUint8(float x, float y) const;
+    float getHeightFromFlat(float x, float y) const;
 
-    public:
+public:
 
-        GridMap();
-        ~GridMap();
+    GridMap();
+    ~GridMap();
 
-        bool loadData(char *filaname);
-        void unloadData();
+    bool loadData(char *filaname);
+    void unloadData();
 
-        static bool ExistMap(uint32 mapid, int gx, int gy);
-        static bool ExistVMap(uint32 mapid, int gx, int gy);
+    static bool ExistMap(uint32 mapid, int gx, int gy);
+    static bool ExistVMap(uint32 mapid, int gx, int gy);
 
-        uint16 getArea(float x, float y);
-        float getHeight(float x, float y) { return (this->*m_gridGetHeight)(x, y); }
-        float getLiquidLevel(float x, float y);
-        uint8 getTerrainType(float x, float y);
-        GridMapLiquidStatus getLiquidStatus(float x, float y, float z, uint8 ReqLiquidType, GridMapLiquidData *data = 0);
+    uint16 getArea(float x, float y);
+    float getHeight(float x, float y) { return (this->*m_gridGetHeight)(x, y); }
+    float getLiquidLevel(float x, float y);
+    uint8 getTerrainType(float x, float y);
+    GridMapLiquidStatus getLiquidStatus(float x, float y, float z, uint8 ReqLiquidType, GridMapLiquidData *data = 0);
 };
 
 template<typename Countable>
@@ -215,7 +215,7 @@ public:
 
     //TODO: move all terrain/vmaps data info query functions
     //from 'Map' class into this class
-    float GetHeight(float x, float y, float z, bool pCheckVMap=true, float maxSearchDist=DEFAULT_HEIGHT_SEARCH) const;
+    float GetHeight(float x, float y, float z, bool pCheckVMap = true, float maxSearchDist = DEFAULT_HEIGHT_SEARCH) const;
     float GetWaterLevel(float x, float y, float z, float* pGround = NULL) const;
     float GetWaterOrGroundLevel(float x, float y, float z, float* pGround = NULL, bool swim = false) const;
     bool IsInWater(float x, float y, float z, GridMapLiquidData *data = 0) const;
@@ -223,8 +223,8 @@ public:
 
     GridMapLiquidStatus getLiquidStatus(float x, float y, float z, uint8 ReqLiquidType, GridMapLiquidData *data = 0) const;
 
-    uint16 GetAreaFlag(float x, float y, float z, bool *isOutdoors=0) const;
-    uint8 GetTerrainType(float x, float y ) const;
+    uint16 GetAreaFlag(float x, float y, float z, bool *isOutdoors = 0) const;
+    uint8 GetTerrainType(float x, float y) const;
 
     uint32 GetAreaId(float x, float y, float z) const;
     uint32 GetZoneId(float x, float y, float z) const;
@@ -250,8 +250,8 @@ private:
     TerrainInfo(const TerrainInfo&);
     TerrainInfo& operator=(const TerrainInfo&);
 
-    GridMap * GetGrid( const float x, const float y );
-    GridMap * LoadMapAndVMap(const uint32 x, const uint32 y );
+    GridMap * GetGrid(const float x, const float y);
+    GridMap * LoadMapAndVMap(const uint32 x, const uint32 y);
 
     int RefGrid(const uint32& x, const uint32& y);
     int UnrefGrid(const uint32& x, const uint32& y);
@@ -290,20 +290,20 @@ public:
     }
     uint32 GetAreaId(uint32 mapid, float x, float y, float z) const
     {
-        return TerrainManager::GetAreaIdByAreaFlag(GetAreaFlag(mapid, x, y, z),mapid);
+        return TerrainManager::GetAreaIdByAreaFlag(GetAreaFlag(mapid, x, y, z), mapid);
     }
     uint32 GetZoneId(uint32 mapid, float x, float y, float z) const
     {
-        return TerrainManager::GetZoneIdByAreaFlag(GetAreaFlag(mapid, x, y, z),mapid);
+        return TerrainManager::GetZoneIdByAreaFlag(GetAreaFlag(mapid, x, y, z), mapid);
     }
     void GetZoneAndAreaId(uint32& zoneid, uint32& areaid, uint32 mapid, float x, float y, float z)
     {
-        TerrainManager::GetZoneAndAreaIdByAreaFlag(zoneid,areaid,GetAreaFlag(mapid, x, y, z),mapid);
+        TerrainManager::GetZoneAndAreaIdByAreaFlag(zoneid, areaid, GetAreaFlag(mapid, x, y, z), mapid);
     }
 
-    static uint32 GetAreaIdByAreaFlag(uint16 areaflag,uint32 map_id);
-    static uint32 GetZoneIdByAreaFlag(uint16 areaflag,uint32 map_id);
-    static void GetZoneAndAreaIdByAreaFlag(uint32& zoneid, uint32& areaid, uint16 areaflag,uint32 map_id);
+    static uint32 GetAreaIdByAreaFlag(uint16 areaflag, uint32 map_id);
+    static uint32 GetZoneIdByAreaFlag(uint16 areaflag, uint32 map_id);
+    static void GetZoneAndAreaIdByAreaFlag(uint32& zoneid, uint32& areaid, uint16 areaflag, uint32 map_id);
 
 private:
     TerrainManager();

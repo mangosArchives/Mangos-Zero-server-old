@@ -61,7 +61,8 @@ struct MassMailerQueryHandler
             Field *fields = result->Fetch();
             recievers.insert(fields[0].GetUInt32());
 
-        } while (result->NextRow());
+        }
+        while (result->NextRow());
         delete result;
     }
 } massMailerQueryHandler;
@@ -115,7 +116,7 @@ void MassMailMgr::Update(bool sendall /*= false*/)
         if (task.m_receivers.empty())
             m_massMails.pop_front();
     }
-    while(!m_massMails.empty() && (sendall || maxcount > 0));
+    while (!m_massMails.empty() && (sendall || maxcount > 0));
 }
 
 void MassMailMgr::GetStatistic(uint32& tasks, uint32& mails, uint32& needTime) const

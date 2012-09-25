@@ -45,7 +45,7 @@ bool Totem::Create(uint32 guidlow, CreatureCreatePos& cPos, CreatureInfo const* 
     cPos.SelectFinalPoint(this);
 
     // Totem must be at same Z in case swimming caster and etc.
-    if (fabs(cPos.m_pos.z - owner->GetPositionZ() ) > 5.0f)
+    if (fabs(cPos.m_pos.z - owner->GetPositionZ()) > 5.0f)
         cPos.m_pos.z = owner->GetPositionZ();
 
     if (!cPos.Relocate(this))
@@ -62,7 +62,7 @@ bool Totem::Create(uint32 guidlow, CreatureCreatePos& cPos, CreatureInfo const* 
     return true;
 }
 
-void Totem::Update(uint32 update_diff, uint32 time )
+void Totem::Update(uint32 update_diff, uint32 time)
 {
     Unit *owner = GetOwner();
     if (!owner || !owner->isAlive() || !isAlive())
@@ -79,7 +79,7 @@ void Totem::Update(uint32 update_diff, uint32 time )
     else
         m_duration -= update_diff;
 
-    Creature::Update( update_diff, time );
+    Creature::Update(update_diff, time);
 }
 
 void Totem::Summon(Unit* owner)
@@ -89,7 +89,7 @@ void Totem::Summon(Unit* owner)
 
     WorldPacket data(SMSG_GAMEOBJECT_SPAWN_ANIM_OBSOLETE, 8);
     data << GetObjectGuid();
-    SendMessageToSet(&data,true);
+    SendMessageToSet(&data, true);
 
     if (owner->GetTypeId() == TYPEID_UNIT && ((Creature*)owner)->AI())
         ((Creature*)owner)->AI()->JustSummoned((Creature*)this);
@@ -98,7 +98,7 @@ void Totem::Summon(Unit* owner)
     if (!GetSpell())
         return;
 
-    switch(m_type)
+    switch (m_type)
     {
         case TOTEM_PASSIVE:
         {
@@ -177,14 +177,14 @@ void Totem::SetTypeBySummonSpell(SpellEntry const * spellProto)
 bool Totem::IsImmuneToSpellEffect(SpellEntry const* spellInfo, SpellEffectIndex index) const
 {
     // TODO: possibly all negative auras immune?
-    switch(spellInfo->Effect[index])
+    switch (spellInfo->Effect[index])
     {
         case SPELL_EFFECT_ATTACK_ME:
             return true;
         default:
             break;
     }
-    switch(spellInfo->EffectApplyAuraName[index])
+    switch (spellInfo->EffectApplyAuraName[index])
     {
         case SPELL_AURA_PERIODIC_DAMAGE:
         case SPELL_AURA_PERIODIC_LEECH:

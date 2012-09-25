@@ -48,9 +48,9 @@
  * @param sender The object/player sending this mail.
  * @param stationery The stationary associated with this sender.
  */
-MailSender::MailSender( Object* sender, MailStationery stationery ) : m_stationery(stationery)
+MailSender::MailSender(Object* sender, MailStationery stationery) : m_stationery(stationery)
 {
-    switch(sender->GetTypeId())
+    switch (sender->GetTypeId())
     {
         case TYPEID_UNIT:
             m_messageType = MAIL_CREATURE;
@@ -72,7 +72,7 @@ MailSender::MailSender( Object* sender, MailStationery stationery ) : m_statione
         default:
             m_messageType = MAIL_NORMAL;
             m_senderId = 0;                                 // will show mail from nonexistent player
-            sLog.outError( "MailSender::MailSender - Mail have unexpected sender typeid (%u)", sender->GetTypeId());
+            sLog.outError("MailSender::MailSender - Mail have unexpected sender typeid (%u)", sender->GetTypeId());
             break;
     }
 }
@@ -81,7 +81,7 @@ MailSender::MailSender( Object* sender, MailStationery stationery ) : m_statione
  *
  * @param sender the AuctionEntry from which this mail is generated.
  */
-MailSender::MailSender( AuctionEntry* sender )
+MailSender::MailSender(AuctionEntry* sender)
     : m_messageType(MAIL_AUCTION), m_senderId(sender->GetHouseId()), m_stationery(MAIL_STATIONERY_AUCTION)
 {
 }
@@ -111,8 +111,8 @@ MailReceiver::MailReceiver(Player* receiver, ObjectGuid receiver_guid) : m_recei
  * @param subject The subject of the mail.
  * @param itemText The text of the body of the mail.
  */
-MailDraft::MailDraft( std::string subject, std::string text ) : m_mailTemplateId(0), m_mailTemplateItemsNeed(false), m_subject(subject),
-m_bodyId(!text.empty() ? sObjectMgr.CreateItemText(text) : 0), m_money(0), m_COD(0)
+MailDraft::MailDraft(std::string subject, std::string text) : m_mailTemplateId(0), m_mailTemplateItemsNeed(false), m_subject(subject),
+    m_bodyId(!text.empty() ? sObjectMgr.CreateItemText(text) : 0), m_money(0), m_COD(0)
 {
 
 }
@@ -133,7 +133,7 @@ MailDraft& MailDraft::SetSubjectAndBody(std::string subject, std::string text)
  * @param item The item to be added to the MailDraft.
  * @returns the MailDraft the item was added to.
  */
-MailDraft& MailDraft::AddItem( Item* item )
+MailDraft& MailDraft::AddItem(Item* item)
 {
     m_items[item->GetGUIDLow()] = item;
     return *this;
@@ -154,11 +154,11 @@ bool MailDraft::prepareItems(Player* receiver)
     mailLoot.FillLoot(m_mailTemplateId, LootTemplates_Mail, receiver, true, true);
 
     uint32 max_slot = mailLoot.GetMaxSlotInLootFor(receiver);
-    for(uint32 i = 0; m_items.size() < MAX_MAIL_ITEMS && i < max_slot; ++i)
+    for (uint32 i = 0; m_items.size() < MAX_MAIL_ITEMS && i < max_slot; ++i)
     {
-        if (LootItem* lootitem = mailLoot.LootItemInSlot(i,receiver))
+        if (LootItem* lootitem = mailLoot.LootItemInSlot(i, receiver))
         {
-            if (Item* item = Item::CreateItem(lootitem->itemid,lootitem->count,receiver))
+            if (Item* item = Item::CreateItem(lootitem->itemid, lootitem->count, receiver))
             {
                 item->SaveToDB();                           // save for prevent lost at next mail load, if send fail then item will deleted
                 AddItem(item);
@@ -173,13 +173,13 @@ bool MailDraft::prepareItems(Player* receiver)
  *
  * @param inDB A boolean specifying whether the change should be saved to the database or not.
  */
-void MailDraft::deleteIncludedItems( bool inDB /**= false*/ )
+void MailDraft::deleteIncludedItems(bool inDB /**= false*/)
 {
-    for(MailItemMap::iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
+    for (MailItemMap::iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
     {
         Item* item = mailItemIter->second;
 
-        if(inDB)
+        if (inDB)
             CharacterDatabase.PExecute("DELETE FROM item_instance WHERE guid='%u'", item->GetGUIDLow());
 
         delete item;
@@ -209,11 +209,11 @@ void MailDraft::CloneFrom(MailDraft const& draft)
     m_money = draft.GetMoney();
     m_COD = draft.GetCOD();
 
-    for(MailItemMap::const_iterator mailItemIter = draft.m_items.begin(); mailItemIter != draft.m_items.end(); ++mailItemIter)
+    for (MailItemMap::const_iterator mailItemIter = draft.m_items.begin(); mailItemIter != draft.m_items.end(); ++mailItemIter)
     {
         Item* item = mailItemIter->second;
 
-        if(Item* newitem = item->CloneItem(item->GetCount()))
+        if (Item* newitem = item->CloneItem(item->GetCount()))
         {
             newitem->SaveToDB();
             AddItem(newitem);
@@ -232,10 +232,10 @@ void MailDraft::SendReturnToSender(uint32 sender_acc, ObjectGuid sender_guid, Ob
     Player *receiver = sObjectMgr.GetPlayer(receiver_guid);
 
     uint32 rc_account = 0;
-    if(!receiver)
+    if (!receiver)
         rc_account = sObjectMgr.GetPlayerAccountIdByGUID(receiver_guid);
 
-    if(!receiver && !rc_account)                            // sender not exist
+    if (!receiver && !rc_account)                           // sender not exist
     {
         deleteIncludedItems(true);
         return;
@@ -244,14 +244,14 @@ void MailDraft::SendReturnToSender(uint32 sender_acc, ObjectGuid sender_guid, Ob
     // prepare mail and send in other case
     bool needItemDelay = false;
 
-    if(!m_items.empty())
+    if (!m_items.empty())
     {
         // if item send to character at another account, then apply item delivery delay
         needItemDelay = sender_acc != rc_account;
 
         // set owner to new receiver (to prevent delete item with sender char deleting)
         CharacterDatabase.BeginTransaction();
-        for(MailItemMap::iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
+        for (MailItemMap::iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
         {
             Item* item = mailItemIter->second;
             item->SaveToDB();                      // item not in inventory and can be save standalone
@@ -265,7 +265,7 @@ void MailDraft::SendReturnToSender(uint32 sender_acc, ObjectGuid sender_guid, Ob
     uint32 deliver_delay = needItemDelay ? sWorld.getConfig(CONFIG_UINT32_MAIL_DELIVERY_DELAY) : 0;
 
     // will delete item or place to receiver mail list
-    SendMailTo(MailReceiver(receiver,receiver_guid), MailSender(MAIL_NORMAL, sender_guid.GetCounter()), MAIL_CHECK_MASK_RETURNED, deliver_delay);
+    SendMailTo(MailReceiver(receiver, receiver_guid), MailSender(MAIL_NORMAL, sender_guid.GetCounter()), MAIL_CHECK_MASK_RETURNED, deliver_delay);
 }
 /**
  * Sends a mail.
@@ -312,14 +312,14 @@ void MailDraft::SendMailTo(MailReceiver const& receiver, MailSender const& sende
     CharacterDatabase.BeginTransaction();
     CharacterDatabase.escape_string(safe_subject);
     CharacterDatabase.PExecute("INSERT INTO mail (id,messageType,stationery,mailTemplateId,sender,receiver,subject,itemTextId,has_items,expire_time,deliver_time,money,cod,checked) "
-        "VALUES ('%u', '%u', '%u', '%u', '%u', '%u', '%s', '%u', '%u', '" UI64FMTD "','" UI64FMTD "', '%u', '%u', '%u')",
-        mailId, sender.GetMailMessageType(), sender.GetStationery(), GetMailTemplateId(), sender.GetSenderId(), receiver.GetPlayerGuid().GetCounter(), safe_subject.c_str(), GetBodyId(), (has_items ? 1 : 0), (uint64)expire_time, (uint64)deliver_time, m_money, m_COD, checked);
+                               "VALUES ('%u', '%u', '%u', '%u', '%u', '%u', '%s', '%u', '%u', '" UI64FMTD "','" UI64FMTD "', '%u', '%u', '%u')",
+                               mailId, sender.GetMailMessageType(), sender.GetStationery(), GetMailTemplateId(), sender.GetSenderId(), receiver.GetPlayerGuid().GetCounter(), safe_subject.c_str(), GetBodyId(), (has_items ? 1 : 0), (uint64)expire_time, (uint64)deliver_time, m_money, m_COD, checked);
 
-    for(MailItemMap::const_iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
+    for (MailItemMap::const_iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
     {
         Item* item = mailItemIter->second;
         CharacterDatabase.PExecute("INSERT INTO mail_items (mail_id,item_guid,item_template,receiver) VALUES ('%u', '%u', '%u','%u')",
-            mailId, item->GetGUIDLow(), item->GetEntry(), receiver.GetPlayerGuid().GetCounter());
+                                   mailId, item->GetGUIDLow(), item->GetEntry(), receiver.GetPlayerGuid().GetCounter());
     }
     CharacterDatabase.CommitTransaction();
 
@@ -336,7 +336,7 @@ void MailDraft::SendMailTo(MailReceiver const& receiver, MailSender const& sende
         m->money = GetMoney();
         m->COD = GetCOD();
 
-        for(MailItemMap::const_iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
+        for (MailItemMap::const_iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
         {
             Item* item = mailItemIter->second;
             m->AddItem(item->GetGUIDLow(), item->GetEntry());
@@ -355,7 +355,7 @@ void MailDraft::SendMailTo(MailReceiver const& receiver, MailSender const& sende
 
         if (!m_items.empty())
         {
-            for(MailItemMap::iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
+            for (MailItemMap::iterator mailItemIter = m_items.begin(); mailItemIter != m_items.end(); ++mailItemIter)
                 pReceiver->AddMItem(mailItemIter->second);
         }
     }
@@ -369,7 +369,7 @@ void MailDraft::SendMailTo(MailReceiver const& receiver, MailSender const& sende
  * @param receiver             reciver of mail
  */
 
-void Mail::prepareTemplateItems( Player* receiver )
+void Mail::prepareTemplateItems(Player* receiver)
 {
     if (!mailTemplateId || !items.empty())
         return;
@@ -385,7 +385,7 @@ void Mail::prepareTemplateItems( Player* receiver )
     CharacterDatabase.PExecute("UPDATE mail SET has_items = 1 WHERE id = %u", messageID);
 
     uint32 max_slot = mailLoot.GetMaxSlotInLootFor(receiver);
-    for(uint32 i = 0; items.size() < MAX_MAIL_ITEMS && i < max_slot; ++i)
+    for (uint32 i = 0; items.size() < MAX_MAIL_ITEMS && i < max_slot; ++i)
     {
         if (LootItem* lootitem = mailLoot.LootItemInSlot(i, receiver))
         {
@@ -398,7 +398,7 @@ void Mail::prepareTemplateItems( Player* receiver )
                 receiver->AddMItem(item);
 
                 CharacterDatabase.PExecute("INSERT INTO mail_items (mail_id,item_guid,item_template,receiver) VALUES ('%u', '%u', '%u','%u')",
-                    messageID, item->GetGUIDLow(), item->GetEntry(), receiver->GetGUIDLow());
+                                           messageID, item->GetGUIDLow(), item->GetEntry(), receiver->GetGUIDLow());
             }
         }
     }

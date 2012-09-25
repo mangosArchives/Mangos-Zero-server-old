@@ -28,20 +28,20 @@ enum DumpTableType
     DTT_CHARACTER,      //    -> guid, name                 // characters
 
     DTT_CHAR_TABLE,     //                                  // character_action, character_aura, character_homebind,
-                                                            // character_queststatus, character_reputation,
-                                                            // character_spell, character_spell_cooldown, character_ticket,
-                                                            // character_tutorial
+    // character_queststatus, character_reputation,
+    // character_spell, character_spell_cooldown, character_ticket,
+    // character_tutorial
 
     DTT_INVENTORY,      //    -> item guids collection      // character_inventory
 
     DTT_MAIL,           //    -> mail ids collection        // mail
-                        //    -> item_text
+    //    -> item_text
 
     DTT_MAIL_ITEM,      // <- mail ids                      // mail_items
-                        //    -> item guids collection
+    //    -> item guids collection
 
     DTT_ITEM,           // <- item guids                    // item_instance
-                        //    -> item_text
+    //    -> item_text
 
     DTT_ITEM_GIFT,      // <- item guids                    // character_gifts
 
@@ -63,36 +63,36 @@ enum DumpReturn
 
 class PlayerDump
 {
-    protected:
-        PlayerDump() {}
+protected:
+    PlayerDump() {}
 };
 
 class PlayerDumpWriter : public PlayerDump
 {
-    public:
-        PlayerDumpWriter() {}
+public:
+    PlayerDumpWriter() {}
 
-        std::string GetDump(uint32 guid);
-        DumpReturn WriteDump(const std::string& file, uint32 guid);
-    private:
-        typedef std::set<uint32> GUIDs;
+    std::string GetDump(uint32 guid);
+    DumpReturn WriteDump(const std::string& file, uint32 guid);
+private:
+    typedef std::set<uint32> GUIDs;
 
-        void DumpTableContent(std::string& dump, uint32 guid, char const*tableFrom, char const*tableTo, DumpTableType type);
-        std::string GenerateWhereStr(char const* field, GUIDs const& guids, GUIDs::const_iterator& itr);
-        std::string GenerateWhereStr(char const* field, uint32 guid);
+    void DumpTableContent(std::string& dump, uint32 guid, char const*tableFrom, char const*tableTo, DumpTableType type);
+    std::string GenerateWhereStr(char const* field, GUIDs const& guids, GUIDs::const_iterator& itr);
+    std::string GenerateWhereStr(char const* field, uint32 guid);
 
-        GUIDs pets;
-        GUIDs mails;
-        GUIDs items;
-        GUIDs texts;
+    GUIDs pets;
+    GUIDs mails;
+    GUIDs items;
+    GUIDs texts;
 };
 
 class PlayerDumpReader : public PlayerDump
 {
-    public:
-        PlayerDumpReader() {}
+public:
+    PlayerDumpReader() {}
 
-        DumpReturn LoadDump(const std::string& file, uint32 account, std::string name, uint32 guid);
+    DumpReturn LoadDump(const std::string& file, uint32 account, std::string name, uint32 guid);
 };
 
 #endif

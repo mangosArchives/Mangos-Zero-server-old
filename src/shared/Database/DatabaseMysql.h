@@ -54,7 +54,7 @@ protected:
     //bind parameters
     void addParam(int nIndex, const SqlStmtFieldData& data);
 
-    static enum_field_types ToMySQLType( const SqlStmtFieldData &data, my_bool &bUnsigned );
+    static enum_field_types ToMySQLType(const SqlStmtFieldData &data, my_bool &bUnsigned);
 
 private:
     void RemoveBinds();
@@ -68,53 +68,53 @@ private:
 
 class MANGOS_DLL_SPEC MySQLConnection : public SqlConnection
 {
-    public:
-        MySQLConnection(Database& db) : SqlConnection(db), mMysql(NULL) {}
-        ~MySQLConnection();
+public:
+    MySQLConnection(Database& db) : SqlConnection(db), mMysql(NULL) {}
+    ~MySQLConnection();
 
-        bool Initialize(const char *infoString);
+    bool Initialize(const char *infoString);
 
-        QueryResult* Query(const char *sql);
-        QueryNamedResult* QueryNamed(const char *sql);
-        bool Execute(const char *sql);
+    QueryResult* Query(const char *sql);
+    QueryNamedResult* QueryNamed(const char *sql);
+    bool Execute(const char *sql);
 
-        unsigned long escape_string(char *to, const char *from, unsigned long length);
+    unsigned long escape_string(char *to, const char *from, unsigned long length);
 
-        bool BeginTransaction();
-        bool CommitTransaction();
-        bool RollbackTransaction();
+    bool BeginTransaction();
+    bool CommitTransaction();
+    bool RollbackTransaction();
 
-    protected:
-        SqlPreparedStatement * CreateStatement(const std::string& fmt);
+protected:
+    SqlPreparedStatement * CreateStatement(const std::string& fmt);
 
-    private:
-        bool _TransactionCmd(const char *sql);
-        bool _Query(const char *sql, MYSQL_RES **pResult, MYSQL_FIELD **pFields, uint64* pRowCount, uint32* pFieldCount);
+private:
+    bool _TransactionCmd(const char *sql);
+    bool _Query(const char *sql, MYSQL_RES **pResult, MYSQL_FIELD **pFields, uint64* pRowCount, uint32* pFieldCount);
 
-        MYSQL *mMysql;
+    MYSQL *mMysql;
 };
 
 class MANGOS_DLL_SPEC DatabaseMysql : public Database
 {
     friend class MaNGOS::OperatorNew<DatabaseMysql>;
 
-    public:
-        DatabaseMysql();
-        ~DatabaseMysql();
+public:
+    DatabaseMysql();
+    ~DatabaseMysql();
 
-        //! Initializes Mysql and connects to a server.
-        /*! infoString should be formated like hostname;username;password;database. */
+    //! Initializes Mysql and connects to a server.
+    /*! infoString should be formated like hostname;username;password;database. */
 
-        // must be call before first query in thread
-        void ThreadStart();
-        // must be call before finish thread run
-        void ThreadEnd();
+    // must be call before first query in thread
+    void ThreadStart();
+    // must be call before finish thread run
+    void ThreadEnd();
 
-    protected:
-        virtual SqlConnection * CreateConnection();
+protected:
+    virtual SqlConnection * CreateConnection();
 
-    private:
-        static size_t db_count;
+private:
+    static size_t db_count;
 };
 
 #endif

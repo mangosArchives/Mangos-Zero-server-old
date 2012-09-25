@@ -41,9 +41,10 @@ public:
     MPQArchive(const char* filename);
     void close();
 
-    void GetFileListTo(vector<string>& filelist) {
+    void GetFileListTo(vector<string>& filelist)
+    {
         uint32 filenum;
-        if(libmpq__file_number(mpq_a, "(listfile)", &filenum)) return;
+        if (libmpq__file_number(mpq_a, "(listfile)", &filenum)) return;
         libmpq__off_t size, transferred;
         libmpq__file_unpacked_size(mpq_a, filenum, &size);
 
@@ -54,9 +55,10 @@ public:
         char seps[] = "\n";
         char *token;
 
-        token = strtok( buffer, seps );
+        token = strtok(buffer, seps);
         uint32 counter = 0;
-        while ((token != NULL) && (counter < size)) {
+        while ((token != NULL) && (counter < size))
+        {
             //cout << token << endl;
             token[strlen(token) - 1] = 0;
             string s = token;
@@ -75,7 +77,7 @@ class MPQFile
     //MPQHANDLE handle;
     bool eof;
     char *buffer;
-    libmpq__off_t pointer,size;
+    libmpq__off_t pointer, size;
 
     // disable copying
     MPQFile(const MPQFile &f) {}
@@ -98,12 +100,12 @@ public:
 inline void flipcc(char *fcc)
 {
     char t;
-    t=fcc[0];
-    fcc[0]=fcc[3];
-    fcc[3]=t;
-    t=fcc[1];
-    fcc[1]=fcc[2];
-    fcc[2]=t;
+    t = fcc[0];
+    fcc[0] = fcc[3];
+    fcc[3] = t;
+    t = fcc[1];
+    fcc[1] = fcc[2];
+    fcc[2] = t;
 }
 
 #endif

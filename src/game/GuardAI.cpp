@@ -41,11 +41,11 @@ void GuardAI::MoveInLineOfSight(Unit *u)
         return;
 
     if (!m_creature->getVictim() && u->isTargetableForAttack() &&
-        ( u->IsHostileToPlayers() || m_creature->IsHostileTo(u) /*|| u->getVictim() && m_creature->IsFriendlyTo(u->getVictim())*/ ) &&
+        (u->IsHostileToPlayers() || m_creature->IsHostileTo(u) /*|| u->getVictim() && m_creature->IsFriendlyTo(u->getVictim())*/) &&
         u->isInAccessablePlaceFor(m_creature))
     {
         float attackRadius = m_creature->GetAttackDistance(u);
-        if (m_creature->IsWithinDistInMap(u,attackRadius))
+        if (m_creature->IsWithinDistInMap(u, attackRadius))
         {
             //Need add code to let guard support player
             AttackStart(u);
@@ -117,16 +117,16 @@ void GuardAI::UpdateAI(const uint32 /*diff*/)
 
 bool GuardAI::IsVisible(Unit *pl) const
 {
-    return m_creature->IsWithinDist(pl,sWorld.getConfig(CONFIG_FLOAT_SIGHT_GUARDER))
-        && pl->isVisibleForOrDetect(m_creature,m_creature,true);
+    return m_creature->IsWithinDist(pl, sWorld.getConfig(CONFIG_FLOAT_SIGHT_GUARDER))
+           && pl->isVisibleForOrDetect(m_creature, m_creature, true);
 }
 
 void GuardAI::AttackStart(Unit *u)
 {
-    if( !u )
+    if (!u)
         return;
 
-    if(m_creature->Attack(u,true))
+    if (m_creature->Attack(u, true))
     {
         i_victimGuid = u->GetObjectGuid();
         m_creature->AddThreat(u);
@@ -139,6 +139,6 @@ void GuardAI::AttackStart(Unit *u)
 
 void GuardAI::JustDied(Unit *killer)
 {
-    if(Player* pkiller = killer->GetCharmerOrOwnerPlayerOrPlayerItself())
+    if (Player* pkiller = killer->GetCharmerOrOwnerPlayerOrPlayerItself())
         m_creature->SendZoneUnderAttackMessage(pkiller);
 }

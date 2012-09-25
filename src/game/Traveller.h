@@ -38,7 +38,7 @@ struct MANGOS_DLL_DECL Traveller
     Traveller& operator=(const Traveller &obj)
     {
         ~Traveller();
-        new (this) Traveller(obj);
+        new(this) Traveller(obj);
         return *this;
     }
 
@@ -62,18 +62,18 @@ struct MANGOS_DLL_DECL Traveller
 template<class T>
 inline uint32 Traveller<T>::GetTotalTravelTimeTo(float x, float y, float z)
 {
-    float dist = GetMoveDestinationTo(x,y,z);
+    float dist = GetMoveDestinationTo(x, y, z);
     double speed = Speed();
 
     speed *=  0.001f;                                       // speed is in seconds so convert from second to millisecond
-    return static_cast<uint32>(dist/speed);
+    return static_cast<uint32>(dist / speed);
 }
 
 // specialization for creatures
 template<>
 inline float Traveller<Creature>::Speed()
 {
-    if(i_traveller.HasSplineFlag(SPLINEFLAG_WALKMODE))
+    if (i_traveller.HasSplineFlag(SPLINEFLAG_WALKMODE))
         return i_traveller.GetSpeed(MOVE_WALK);
     else
         return i_traveller.GetSpeed(MOVE_RUN);
@@ -94,10 +94,10 @@ inline float Traveller<Creature>::GetMoveDestinationTo(float x, float y, float z
     if (i_traveller.CanFly())
     {
         float dz = z - GetPositionZ();
-        return sqrt((dx*dx) + (dy*dy) + (dz*dz));
+        return sqrt((dx * dx) + (dy * dy) + (dz * dz));
     }
     else                                                    //Walking on the ground
-        return sqrt((dx*dx) + (dy*dy));
+        return sqrt((dx * dx) + (dy * dy));
 }
 
 
@@ -131,9 +131,9 @@ inline float Traveller<Player>::GetMoveDestinationTo(float x, float y, float z)
     float dz = z - GetPositionZ();
 
     if (i_traveller.IsTaxiFlying())
-        return sqrt((dx*dx) + (dy*dy) + (dz*dz));
+        return sqrt((dx * dx) + (dy * dy) + (dz * dz));
     else                                                    //Walking on the ground
-        return sqrt((dx*dx) + (dy*dy));
+        return sqrt((dx * dx) + (dy * dy));
 }
 
 template<>

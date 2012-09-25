@@ -33,22 +33,22 @@ class MANGOS_DLL_DECL GuardAI : public CreatureAI
         STATE_LOOK_AT_VICTIM = 2
     };
 
-    public:
+public:
 
-        explicit GuardAI(Creature *c);
+    explicit GuardAI(Creature *c);
 
-        void MoveInLineOfSight(Unit *);
-        void AttackStart(Unit *);
-        void EnterEvadeMode();
-        void JustDied(Unit *);
-        bool IsVisible(Unit *) const;
+    void MoveInLineOfSight(Unit *);
+    void AttackStart(Unit *);
+    void EnterEvadeMode();
+    void JustDied(Unit *);
+    bool IsVisible(Unit *) const;
 
-        void UpdateAI(const uint32);
-        static int Permissible(const Creature *);
+    void UpdateAI(const uint32);
+    static int Permissible(const Creature *);
 
-    private:
-        ObjectGuid i_victimGuid;
-        GuardState i_state;
-        TimeTracker i_tracker;
+private:
+    ObjectGuid i_victimGuid;
+    GuardState i_state;
+    TimeTracker i_tracker;
 };
 #endif

@@ -45,7 +45,7 @@ static bool GetValueHelper(ACE_Configuration_Heap *mConf, const char *name, ACE_
 }
 
 Config::Config()
-: mConf(NULL)
+    : mConf(NULL)
 {
 }
 

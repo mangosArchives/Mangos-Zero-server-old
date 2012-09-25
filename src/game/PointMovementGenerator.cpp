@@ -31,7 +31,7 @@ void PointMovementGenerator<T>::Initialize(T &unit)
     if (!unit.IsStopped())
         unit.StopMoving();
 
-    unit.addUnitState(UNIT_STAT_ROAMING|UNIT_STAT_ROAMING_MOVE);
+    unit.addUnitState(UNIT_STAT_ROAMING | UNIT_STAT_ROAMING_MOVE);
 
     Traveller<T> traveller(unit);
     i_destinationHolder.SetDestination(traveller, i_x, i_y, i_z);
@@ -43,7 +43,7 @@ void PointMovementGenerator<T>::Initialize(T &unit)
 template<class T>
 void PointMovementGenerator<T>::Finalize(T &unit)
 {
-    unit.clearUnitState(UNIT_STAT_ROAMING|UNIT_STAT_ROAMING_MOVE);
+    unit.clearUnitState(UNIT_STAT_ROAMING | UNIT_STAT_ROAMING_MOVE);
 
     if (i_destinationHolder.HasArrived())
         MovementInform(unit);
@@ -52,7 +52,7 @@ void PointMovementGenerator<T>::Finalize(T &unit)
 template<class T>
 void PointMovementGenerator<T>::Interrupt(T &unit)
 {
-    unit.clearUnitState(UNIT_STAT_ROAMING|UNIT_STAT_ROAMING_MOVE);
+    unit.clearUnitState(UNIT_STAT_ROAMING | UNIT_STAT_ROAMING_MOVE);
 }
 
 template<class T>
@@ -61,16 +61,16 @@ void PointMovementGenerator<T>::Reset(T &unit)
     if (!unit.IsStopped())
         unit.StopMoving();
 
-    unit.addUnitState(UNIT_STAT_ROAMING|UNIT_STAT_ROAMING_MOVE);
+    unit.addUnitState(UNIT_STAT_ROAMING | UNIT_STAT_ROAMING_MOVE);
 }
 
 template<class T>
 bool PointMovementGenerator<T>::Update(T &unit, const uint32 &diff)
 {
-    if(!&unit)
+    if (!&unit)
         return false;
 
-    if(unit.hasUnitState(UNIT_STAT_CAN_NOT_MOVE))
+    if (unit.hasUnitState(UNIT_STAT_CAN_NOT_MOVE))
     {
         unit.clearUnitState(UNIT_STAT_ROAMING_MOVE);
         return true;
@@ -106,7 +106,7 @@ void PointMovementGenerator<Creature>::MovementInform(Creature &unit)
     {
         TemporarySummon* pSummon = (TemporarySummon*)(&unit);
         if (pSummon->GetSummonerGuid().IsCreature())
-            if(Creature* pSummoner = unit.GetMap()->GetCreature(pSummon->GetSummonerGuid()))
+            if (Creature* pSummoner = unit.GetMap()->GetCreature(pSummon->GetSummonerGuid()))
                 if (pSummoner->AI())
                     pSummoner->AI()->SummonedMovementInform(&unit, POINT_MOTION_TYPE, id);
     }
@@ -125,7 +125,7 @@ template bool PointMovementGenerator<Creature>::Update(Creature&, const uint32 &
 
 void AssistanceMovementGenerator::Finalize(Unit &unit)
 {
-    unit.clearUnitState(UNIT_STAT_ROAMING|UNIT_STAT_ROAMING_MOVE);
+    unit.clearUnitState(UNIT_STAT_ROAMING | UNIT_STAT_ROAMING_MOVE);
 
     ((Creature*)&unit)->SetNoCallAssistance(false);
     ((Creature*)&unit)->CallAssistance();

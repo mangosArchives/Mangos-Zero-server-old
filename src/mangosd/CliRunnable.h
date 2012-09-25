@@ -29,8 +29,8 @@
 /// Command Line Interface handling thread
 class CliRunnable : public ACE_Based::Runnable
 {
-    public:
-        void run();
+public:
+    void run();
 };
 #endif
 /// @}

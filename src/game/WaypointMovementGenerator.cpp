@@ -56,7 +56,7 @@ void WaypointMovementGenerator<Creature>::LoadPath(Creature &creature)
         if (!i_path)
         {
             sLog.outErrorDb("WaypointMovementGenerator::LoadPath: creature %s (Entry: %u GUID: %u) doesn't have waypoint path",
-                creature.GetName(), creature.GetEntry(), creature.GetGUIDLow());
+                            creature.GetName(), creature.GetEntry(), creature.GetGUIDLow());
             return;
         }
     }
@@ -67,22 +67,22 @@ void WaypointMovementGenerator<Creature>::LoadPath(Creature &creature)
 void WaypointMovementGenerator<Creature>::Initialize(Creature &creature)
 {
     LoadPath(creature);
-    creature.addUnitState(UNIT_STAT_ROAMING|UNIT_STAT_ROAMING_MOVE);
+    creature.addUnitState(UNIT_STAT_ROAMING | UNIT_STAT_ROAMING_MOVE);
 }
 
 void WaypointMovementGenerator<Creature>::Finalize(Creature &creature)
 {
-    creature.clearUnitState(UNIT_STAT_ROAMING|UNIT_STAT_ROAMING_MOVE);
+    creature.clearUnitState(UNIT_STAT_ROAMING | UNIT_STAT_ROAMING_MOVE);
 }
 
 void WaypointMovementGenerator<Creature>::Interrupt(Creature &creature)
 {
-    creature.clearUnitState(UNIT_STAT_ROAMING|UNIT_STAT_ROAMING_MOVE);
+    creature.clearUnitState(UNIT_STAT_ROAMING | UNIT_STAT_ROAMING_MOVE);
 }
 
 void WaypointMovementGenerator<Creature>::Reset(Creature &creature)
 {
-    creature.addUnitState(UNIT_STAT_ROAMING|UNIT_STAT_ROAMING_MOVE);
+    creature.addUnitState(UNIT_STAT_ROAMING | UNIT_STAT_ROAMING_MOVE);
     StartMoveNow(creature);
 }
 
@@ -127,7 +127,7 @@ void WaypointMovementGenerator<Creature>::OnArrived(Creature& creature)
             {
                 // Select one from max 5 texts (0 and 1 already checked)
                 int i = 2;
-                for(; i < MAX_WAYPOINT_TEXT; ++i)
+                for (; i < MAX_WAYPOINT_TEXT; ++i)
                 {
                     if (!behavior->textid[i])
                         break;
@@ -161,7 +161,7 @@ void WaypointMovementGenerator<Creature>::StartMove(Creature &creature)
     }
 
     if (m_isArrivalDone)
-        i_currentNode = (i_currentNode+1) % i_path->size();
+        i_currentNode = (i_currentNode + 1) % i_path->size();
 
     m_isArrivalDone = false;
 
@@ -197,7 +197,7 @@ bool WaypointMovementGenerator<Creature>::Update(Creature &creature, const uint3
             StartMove(creature);
     }
     else
-     {
+    {
         CreatureTraveller traveller(creature);
         if (i_destinationHolder.UpdateTraveller(traveller, diff, false, true) && !IsActive(creature))
             return true;
@@ -222,7 +222,7 @@ void WaypointMovementGenerator<Creature>::MovementInform(Creature &creature)
 
 bool WaypointMovementGenerator<Creature>::GetResetPosition(Creature&, float& x, float& y, float& z)
 {
-    return PathMovementBase<Creature, WaypointPath const*>::GetPosition(x,y,z);
+    return PathMovementBase<Creature, WaypointPath const*>::GetPosition(x, y, z);
 }
 
 //----------------------------------------------------//
@@ -233,7 +233,7 @@ uint32 FlightPathMovementGenerator::GetPathAtMapEnd() const
 
     uint32 curMapId = (*i_path)[i_currentNode].mapid;
 
-    for(uint32 i = i_currentNode; i < i_path->size(); ++i)
+    for (uint32 i = i_currentNode; i < i_path->size(); ++i)
     {
         if ((*i_path)[i].mapid != curMapId)
             return i;
@@ -257,12 +257,12 @@ void FlightPathMovementGenerator::Finalize(Player & player)
     player.SetPosition(x, y, z, player.GetOrientation());
 
     player.Unmount();
-    player.RemoveFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
+    player.RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
 
-    if(player.m_taxi.empty())
+    if (player.m_taxi.empty())
     {
         player.getHostileRefManager().setOnlineOfflineState(true);
-        if(player.pvpInfo.inHostileArea)
+        if (player.pvpInfo.inHostileArea)
             player.CastSpell(&player, 2479, true);
 
         // update z position to ground and orientation for landing point
@@ -281,12 +281,12 @@ void FlightPathMovementGenerator::Reset(Player & player)
 {
     player.getHostileRefManager().setOnlineOfflineState(false);
     player.addUnitState(UNIT_STAT_TAXI_FLIGHT);
-    player.SetFlag(UNIT_FIELD_FLAGS,UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
+    player.SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE | UNIT_FLAG_TAXI_FLIGHT);
     Traveller<Player> traveller(player);
     // do not send movement, it was sent already
     i_destinationHolder.SetDestination(traveller, (*i_path)[i_currentNode].x, (*i_path)[i_currentNode].y, (*i_path)[i_currentNode].z, false);
 
-    player.SendMonsterMoveByPath(GetPath(),GetCurrentNode(),GetPathAtMapEnd(), SplineFlags(SPLINEFLAG_WALKMODE|SPLINEFLAG_FLYING));
+    player.SendMonsterMoveByPath(GetPath(), GetCurrentNode(), GetPathAtMapEnd(), SplineFlags(SPLINEFLAG_WALKMODE | SPLINEFLAG_FLYING));
 }
 
 bool FlightPathMovementGenerator::Update(Player &player, const uint32 &diff)
@@ -294,7 +294,7 @@ bool FlightPathMovementGenerator::Update(Player &player, const uint32 &diff)
     if (MovementInProgress())
     {
         Traveller<Player> traveller(player);
-        if( i_destinationHolder.UpdateTraveller(traveller, diff, false) )
+        if (i_destinationHolder.UpdateTraveller(traveller, diff, false))
         {
             if (!IsActive(player))                          // force stop processing (movement can move out active zone with cleanup movegens list)
                 return true;                                // not expire now, but already lost
@@ -353,7 +353,8 @@ void FlightPathMovementGenerator::SetCurrentNodeAfterTeleport()
 int GetFCost(int to, int num, int parentNum, float *gcost); // Below...
 
 int ShortenASTARRoute(short int *pathlist, int number)
-{                                                           // Wrote this to make the routes a little smarter (shorter)... No point looping back to the same places... Unique1
+{
+    // Wrote this to make the routes a little smarter (shorter)... No point looping back to the same places... Unique1
     short int temppathlist[MAX_PATHLIST_NODES];
     int count = 0;
     //    int count2 = 0;
@@ -379,7 +380,8 @@ int ShortenASTARRoute(short int *pathlist, int number)
                 //    continue;
 
                 if (nodes[pathlist[temp]].links[link].targetNode == pathlist[temp2])
-                {                                           // Found a shorter route...
+                {
+                    // Found a shorter route...
                     //if (OrgVisible(nodes[pathlist[temp2]].origin, nodes[pathlist[temp]].origin, -1))
                     {
                         temppathlist[count] = pathlist[temp2];
@@ -425,14 +427,14 @@ int CreatePathAStar(gentity_t *bot, int from, int to, short int *pathlist)
 {
     //all the data we have to hold...since we can't do dynamic allocation, has to be MAX_NODES
     //we can probably lower this later - eg, the open list should never have more than at most a few dozen items on it
-    short int openlist[MAX_NODES+1];                        //add 1 because it's a binary heap, and they don't use 0 - 1 is the first used index
+    short int openlist[MAX_NODES + 1];                      //add 1 because it's a binary heap, and they don't use 0 - 1 is the first used index
     float gcost[MAX_NODES];
     int fcost[MAX_NODES];
     char list[MAX_NODES];                                   //0 is neither, 1 is open, 2 is closed - char because it's the smallest data type
     short int parent[MAX_NODES];
 
     short int numOpen = 0;
-    short int atNode, temp, newnode=-1;
+    short int atNode, temp, newnode = -1;
     qboolean found = qfalse;
     int count = -1;
     float gc;
@@ -440,7 +442,7 @@ int CreatePathAStar(gentity_t *bot, int from, int to, short int *pathlist)
     vec3_t vec;
 
     //clear out all the arrays
-    memset(openlist, 0, sizeof(short int)*(MAX_NODES+1));
+    memset(openlist, 0, sizeof(short int) * (MAX_NODES + 1));
     memset(fcost, 0, sizeof(int)*MAX_NODES);
     memset(list, 0, sizeof(char)*MAX_NODES);
     memset(parent, 0, sizeof(short int)*MAX_NODES);
@@ -464,26 +466,26 @@ int CreatePathAStar(gentity_t *bot, int from, int to, short int *pathlist)
             list[atNode] = 2;                               //put the node on the closed list so we don't check it again
             --numOpen;
 
-            openlist[1] = openlist[numOpen+1];              //move the last item in the list to the top position
+            openlist[1] = openlist[numOpen + 1];            //move the last item in the list to the top position
             v = 1;
 
             //this while loop reorders the list so that the new lowest fcost is at the top again
             while (1)
             {
                 u = v;
-                if ((2*u+1) < numOpen)                      //if both children exist
+                if ((2 * u + 1) < numOpen)                  //if both children exist
                 {
-                    if (fcost[openlist[u]] >= fcost[openlist[2*u]])
-                        v = 2*u;
-                    if (fcost[openlist[v]] >= fcost[openlist[2*u+1]])
-                        v = 2*u+1;
+                    if (fcost[openlist[u]] >= fcost[openlist[2 * u]])
+                        v = 2 * u;
+                    if (fcost[openlist[v]] >= fcost[openlist[2 * u + 1]])
+                        v = 2 * u + 1;
                 }
                 else
                 {
-                    if ((2*u) < numOpen)                    //if only one child exists
+                    if ((2 * u) < numOpen)                  //if only one child exists
                     {
-                        if (fcost[openlist[u]] >= fcost[openlist[2*u]])
-                            v = 2*u;
+                        if (fcost[openlist[u]] >= fcost[openlist[2 * u]])
+                            v = 2 * u;
                     }
                 }
 
@@ -533,10 +535,10 @@ int CreatePathAStar(gentity_t *bot, int from, int to, short int *pathlist)
                     while (m != 1)                          //while this item isn't at the top of the heap already
                     {
                         //if it has a lower fcost than its parent
-                        if (fcost[openlist[m]] <= fcost[openlist[m/2]])
+                        if (fcost[openlist[m]] <= fcost[openlist[m / 2]])
                         {
-                            temp = openlist[m/2];
-                            openlist[m/2] = openlist[m];
+                            temp = openlist[m / 2];
+                            openlist[m / 2] = openlist[m];
                             openlist[m] = temp;             //swap them
                             m /= 2;
                         }
@@ -567,10 +569,10 @@ int CreatePathAStar(gentity_t *bot, int from, int to, short int *pathlist)
                                 while (m != 1)
                                 {
                                     //if the item has a lower fcost than it's parent
-                                    if (fcost[openlist[m]] < fcost[openlist[m/2]])
+                                    if (fcost[openlist[m]] < fcost[openlist[m / 2]])
                                     {
-                                        temp = openlist[m/2];
-                                        openlist[m/2] = openlist[m];
+                                        temp = openlist[m / 2];
+                                        openlist[m / 2] = openlist[m];
                                         openlist[m] = temp; //swap them
                                         m /= 2;
                                     }
@@ -611,9 +613,9 @@ int CreatePathAStar(gentity_t *bot, int from, int to, short int *pathlist)
 
         pathlist[count++] = from;                           //add the beginning node to the end of the pathlist
 
-        #ifdef __BOT_SHORTEN_ROUTING__
+#ifdef __BOT_SHORTEN_ROUTING__
         count = ShortenASTARRoute(pathlist, count);         // This isn't working... Dunno why.. Unique1
-        #endif                                              //__BOT_SHORTEN_ROUTING__
+#endif                                              //__BOT_SHORTEN_ROUTING__
     }
     else
     {
@@ -622,9 +624,9 @@ int CreatePathAStar(gentity_t *bot, int from, int to, short int *pathlist)
 
         if (count > 0)
         {
-            #ifdef __BOT_SHORTEN_ROUTING__
+#ifdef __BOT_SHORTEN_ROUTING__
             count = ShortenASTARRoute(pathlist, count);     // This isn't working... Dunno why.. Unique1
-            #endif                                          //__BOT_SHORTEN_ROUTING__
+#endif                                          //__BOT_SHORTEN_ROUTING__
             return count;
         }
     }

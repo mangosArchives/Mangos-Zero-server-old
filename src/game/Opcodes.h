@@ -978,42 +978,42 @@ typedef std::map< uint16, OpcodeHandler> OpcodeMap;
 
 class Opcodes
 {
-    public:
-        Opcodes();
-        ~Opcodes();
-    public:
-        void BuildOpcodeList();
-        void StoreOpcode(uint16 Opcode,char const* name, SessionStatus status, PacketProcessing process, void (WorldSession::*handler)(WorldPacket& recvPacket))
-        {
-            OpcodeHandler& ref = mOpcodeMap[Opcode];
-            ref.name = name;
-            ref.status = status;
-            ref.packetProcessing = process;
-            ref.handler = handler;
-        }
+public:
+    Opcodes();
+    ~Opcodes();
+public:
+    void BuildOpcodeList();
+    void StoreOpcode(uint16 Opcode, char const* name, SessionStatus status, PacketProcessing process, void (WorldSession::*handler)(WorldPacket& recvPacket))
+    {
+        OpcodeHandler& ref = mOpcodeMap[Opcode];
+        ref.name = name;
+        ref.status = status;
+        ref.packetProcessing = process;
+        ref.handler = handler;
+    }
 
-        /// Lookup opcode
-        inline OpcodeHandler const* LookupOpcode(uint16 id) const
-        {
-            OpcodeMap::const_iterator itr = mOpcodeMap.find(id);
-            if (itr != mOpcodeMap.end())
-                return &itr->second;
-            return NULL;
-        }
+    /// Lookup opcode
+    inline OpcodeHandler const* LookupOpcode(uint16 id) const
+    {
+        OpcodeMap::const_iterator itr = mOpcodeMap.find(id);
+        if (itr != mOpcodeMap.end())
+            return &itr->second;
+        return NULL;
+    }
 
-        /// compatible with other mangos branches access
+    /// compatible with other mangos branches access
 
-        inline OpcodeHandler const& operator[] (uint16 id) const
-        {
-            OpcodeMap::const_iterator itr = mOpcodeMap.find(id);
-            if (itr != mOpcodeMap.end())
-                return itr->second;
-            return emptyHandler;
-        }
+    inline OpcodeHandler const& operator[](uint16 id) const
+    {
+        OpcodeMap::const_iterator itr = mOpcodeMap.find(id);
+        if (itr != mOpcodeMap.end())
+            return itr->second;
+        return emptyHandler;
+    }
 
-        static OpcodeHandler const emptyHandler;
+    static OpcodeHandler const emptyHandler;
 
-        OpcodeMap mOpcodeMap;
+    OpcodeMap mOpcodeMap;
 
 };
 

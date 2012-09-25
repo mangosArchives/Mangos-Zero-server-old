@@ -32,7 +32,7 @@ namespace ByteConverter
     inline void convert(char *val)
     {
         std::swap(*val, *(val + T - 1));
-        convert<T - 2>(val + 1);
+        convert < T - 2 > (val + 1);
     }
 
     template<> inline void convert<0>(char *) {}
@@ -59,6 +59,6 @@ template<typename T> void EndianConvertReverse(T*);  // will generate link error
 inline void EndianConvert(uint8&) { }
 inline void EndianConvert(int8&)  { }
 inline void EndianConvertReverse(uint8&) { }
-inline void EndianConvertReverse( int8&) { }
+inline void EndianConvertReverse(int8&) { }
 
 #endif

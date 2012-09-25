@@ -173,7 +173,8 @@ enum BG_AV_Graveyards
     BG_AV_GRAVE_MAIN_HORDE         = 610
 };
 
-const uint32 BG_AV_GraveyardIds[9]= {
+const uint32 BG_AV_GraveyardIds[9] =
+{
     BG_AV_GRAVE_STORM_AID,
     BG_AV_GRAVE_STORM_GRAVE,
     BG_AV_GRAVE_STONE_GRAVE,
@@ -214,43 +215,45 @@ enum BattleGroundAVTeamIndex
 #define BG_AV_TEAMS_COUNT 3
 
 // alliance_control horde_control neutral_control
-const uint32 BG_AV_MineWorldStates[2][BG_AV_TEAMS_COUNT] = {
+const uint32 BG_AV_MineWorldStates[2][BG_AV_TEAMS_COUNT] =
+{
     {1358, 1359, 1360},
     {1355, 1356, 1357}
 };
 
 // alliance_control alliance_assault h_control h_assault
-const uint32 BG_AV_NodeWorldStates[BG_AV_NODES_MAX][4] = {
+const uint32 BG_AV_NodeWorldStates[BG_AV_NODES_MAX][4] =
+{
     // Stormpike first aid station
-    {1326,1325,1328,1327},
+    {1326, 1325, 1328, 1327},
     // Stormpike Graveyard
-    {1335,1333,1336,1334},
+    {1335, 1333, 1336, 1334},
     // Stoneheart Grave
-    {1304,1302,1303,1301},
+    {1304, 1302, 1303, 1301},
     // Snowfall Grave
-    {1343,1341,1344,1342},
+    {1343, 1341, 1344, 1342},
     // Iceblood grave
-    {1348,1346,1349,1347},
+    {1348, 1346, 1349, 1347},
     // Frostwolf Grave
-    {1339,1337,1340,1338},
+    {1339, 1337, 1340, 1338},
     // Frostwolf Hut
-    {1331,1329,1332,1330},
+    {1331, 1329, 1332, 1330},
     // Dunbaldar South Bunker
-    {1375,1361,1378,1370},
+    {1375, 1361, 1378, 1370},
     // Dunbaldar North Bunker
-    {1374,1362,1379,1371},
+    {1374, 1362, 1379, 1371},
     // Icewing Bunker
-    {1376,1363,1380,1372},
+    {1376, 1363, 1380, 1372},
     // Stoneheart Bunker
-    {1377,1364,1381,1373},
+    {1377, 1364, 1381, 1373},
     // Iceblood Tower
-    {1390,1368,1395,1385},
+    {1390, 1368, 1395, 1385},
     // Tower Point
-    {1389,1367,1394,1384},
+    {1389, 1367, 1394, 1384},
     // Frostwolf East
-    {1388,1366,1393,1383},
+    {1388, 1366, 1393, 1383},
     // Frostwolf West
-    {1387,1365,1392,1382},
+    {1387, 1365, 1392, 1382},
 };
 
 // through the armorscap-quest 4 different gravedefender exist
@@ -299,101 +302,101 @@ inline BG_AV_Nodes &operator++(BG_AV_Nodes &i)
 
 class BattleGroundAVScore : public BattleGroundScore
 {
-    public:
-        BattleGroundAVScore() : GraveyardsAssaulted(0), GraveyardsDefended(0), TowersAssaulted(0), TowersDefended(0), SecondaryObjectives(0), LieutnantCount(0), SecondaryNPC(0) {};
-        virtual ~BattleGroundAVScore() {};
-        uint32 GraveyardsAssaulted;
-        uint32 GraveyardsDefended;
-        uint32 TowersAssaulted;
-        uint32 TowersDefended;
-        uint32 SecondaryObjectives;
-        uint32 LieutnantCount;
-        uint32 SecondaryNPC;
+public:
+    BattleGroundAVScore() : GraveyardsAssaulted(0), GraveyardsDefended(0), TowersAssaulted(0), TowersDefended(0), SecondaryObjectives(0), LieutnantCount(0), SecondaryNPC(0) {};
+    virtual ~BattleGroundAVScore() {};
+    uint32 GraveyardsAssaulted;
+    uint32 GraveyardsDefended;
+    uint32 TowersAssaulted;
+    uint32 TowersDefended;
+    uint32 SecondaryObjectives;
+    uint32 LieutnantCount;
+    uint32 SecondaryNPC;
 };
 
 class BattleGroundAV : public BattleGround
 {
     friend class BattleGroundMgr;
 
-    public:
-        BattleGroundAV();
-        ~BattleGroundAV();
-        void Update(uint32 diff);
+public:
+    BattleGroundAV();
+    ~BattleGroundAV();
+    void Update(uint32 diff);
 
-        /* inherited from BattlegroundClass */
-        virtual void AddPlayer(Player *plr);
+    /* inherited from BattlegroundClass */
+    virtual void AddPlayer(Player *plr);
 
-        virtual void StartingEventCloseDoors();
-        virtual void StartingEventOpenDoors();
-        // world states
-        virtual void FillInitialWorldStates(WorldPacket& data, uint32& count);
+    virtual void StartingEventCloseDoors();
+    virtual void StartingEventOpenDoors();
+    // world states
+    virtual void FillInitialWorldStates(WorldPacket& data, uint32& count);
 
-        void RemovePlayer(Player *plr, ObjectGuid guid);
-        void HandleAreaTrigger(Player *Source, uint32 Trigger);
-        virtual void Reset();
+    void RemovePlayer(Player *plr, ObjectGuid guid);
+    void HandleAreaTrigger(Player *Source, uint32 Trigger);
+    virtual void Reset();
 
-        /*general stuff*/
-        void UpdateScore(BattleGroundTeamIndex teamIdx, int32 points);
-        void UpdatePlayerScore(Player *Source, uint32 type, uint32 value);
+    /*general stuff*/
+    void UpdateScore(BattleGroundTeamIndex teamIdx, int32 points);
+    void UpdatePlayerScore(Player *Source, uint32 type, uint32 value);
 
-        /*handle stuff*/ // these are functions which get called from extern scripts
-        virtual void EventPlayerClickedOnFlag(Player *source, GameObject* target_obj);
-        void HandleKillPlayer(Player* player, Player *killer);
-        void HandleKillUnit(Creature *creature, Player *killer);
-        void HandleQuestComplete(uint32 questid, Player *player);
-        bool PlayerCanDoMineQuest(int32 GOId, Team team);
+    /*handle stuff*/ // these are functions which get called from extern scripts
+    virtual void EventPlayerClickedOnFlag(Player *source, GameObject* target_obj);
+    void HandleKillPlayer(Player* player, Player *killer);
+    void HandleKillUnit(Creature *creature, Player *killer);
+    void HandleQuestComplete(uint32 questid, Player *player);
+    bool PlayerCanDoMineQuest(int32 GOId, Team team);
 
-        void EndBattleGround(Team winner);
+    void EndBattleGround(Team winner);
 
-        virtual WorldSafeLocsEntry const* GetClosestGraveYard(Player *plr);
+    virtual WorldSafeLocsEntry const* GetClosestGraveYard(Player *plr);
 
-        static BattleGroundAVTeamIndex GetAVTeamIndexByTeamId(Team team) { return BattleGroundAVTeamIndex(GetTeamIndexByTeamId(team)); }
-    private:
-        /* Nodes occupying */
-        void EventPlayerAssaultsPoint(Player* player, BG_AV_Nodes node);
-        void EventPlayerDefendsPoint(Player* player, BG_AV_Nodes node);
-        void EventPlayerDestroyedPoint(BG_AV_Nodes node);
+    static BattleGroundAVTeamIndex GetAVTeamIndexByTeamId(Team team) { return BattleGroundAVTeamIndex(GetTeamIndexByTeamId(team)); }
+private:
+    /* Nodes occupying */
+    void EventPlayerAssaultsPoint(Player* player, BG_AV_Nodes node);
+    void EventPlayerDefendsPoint(Player* player, BG_AV_Nodes node);
+    void EventPlayerDestroyedPoint(BG_AV_Nodes node);
 
-        void AssaultNode(BG_AV_Nodes node, BattleGroundTeamIndex teamIdx);
-        void DestroyNode(BG_AV_Nodes node);
-        void InitNode(BG_AV_Nodes node, BattleGroundAVTeamIndex teamIdx, bool tower);
-        void DefendNode(BG_AV_Nodes node, BattleGroundTeamIndex teamIdx);
+    void AssaultNode(BG_AV_Nodes node, BattleGroundTeamIndex teamIdx);
+    void DestroyNode(BG_AV_Nodes node);
+    void InitNode(BG_AV_Nodes node, BattleGroundAVTeamIndex teamIdx, bool tower);
+    void DefendNode(BG_AV_Nodes node, BattleGroundTeamIndex teamIdx);
 
-        void PopulateNode(BG_AV_Nodes node);
+    void PopulateNode(BG_AV_Nodes node);
 
-        uint32 GetNodeName(BG_AV_Nodes node);
-        const bool IsTower(BG_AV_Nodes node) { return (node == BG_AV_NODES_ERROR)? false : m_Nodes[node].Tower; }
-        const bool IsGrave(BG_AV_Nodes node) { return (node == BG_AV_NODES_ERROR)? false : !m_Nodes[node].Tower; }
+    uint32 GetNodeName(BG_AV_Nodes node);
+    const bool IsTower(BG_AV_Nodes node) { return (node == BG_AV_NODES_ERROR) ? false : m_Nodes[node].Tower; }
+    const bool IsGrave(BG_AV_Nodes node) { return (node == BG_AV_NODES_ERROR) ? false : !m_Nodes[node].Tower; }
 
-        /*mine*/
-        void ChangeMineOwner(uint8 mine, BattleGroundAVTeamIndex teamIdx);
+    /*mine*/
+    void ChangeMineOwner(uint8 mine, BattleGroundAVTeamIndex teamIdx);
 
-        /*worldstates*/
-        uint8 GetWorldStateType(uint8 state, BattleGroundAVTeamIndex teamIdx) const { return teamIdx * BG_AV_MAX_STATES + state; }
-        void SendMineWorldStates(uint32 mine);
-        void UpdateNodeWorldState(BG_AV_Nodes node);
+    /*worldstates*/
+    uint8 GetWorldStateType(uint8 state, BattleGroundAVTeamIndex teamIdx) const { return teamIdx * BG_AV_MAX_STATES + state; }
+    void SendMineWorldStates(uint32 mine);
+    void UpdateNodeWorldState(BG_AV_Nodes node);
 
-        /*variables */
-        uint32 m_Team_QuestStatus[BG_TEAMS_COUNT][9];       // [x][y] x=team y=questcounter
+    /*variables */
+    uint32 m_Team_QuestStatus[BG_TEAMS_COUNT][9];       // [x][y] x=team y=questcounter
 
-        BG_AV_NodeInfo m_Nodes[BG_AV_NODES_MAX];
+    BG_AV_NodeInfo m_Nodes[BG_AV_NODES_MAX];
 
-        // only for worldstates needed
-        BattleGroundAVTeamIndex m_Mine_Owner[BG_AV_MAX_MINES];
-        BattleGroundAVTeamIndex m_Mine_PrevOwner[BG_AV_MAX_MINES];
-        int32 m_Mine_Timer[BG_AV_MAX_MINES];
-        uint32 m_Mine_Reclaim_Timer[BG_AV_MAX_MINES];
+    // only for worldstates needed
+    BattleGroundAVTeamIndex m_Mine_Owner[BG_AV_MAX_MINES];
+    BattleGroundAVTeamIndex m_Mine_PrevOwner[BG_AV_MAX_MINES];
+    int32 m_Mine_Timer[BG_AV_MAX_MINES];
+    uint32 m_Mine_Reclaim_Timer[BG_AV_MAX_MINES];
 
-        bool m_IsInformedNearLose[BG_TEAMS_COUNT];
+    bool m_IsInformedNearLose[BG_TEAMS_COUNT];
 
-        uint32 m_HonorMapComplete;
-        uint32 m_RepTowerDestruction;
-        uint32 m_RepCaptain;
-        uint32 m_RepBoss;
-        uint32 m_RepOwnedGrave;
-        uint32 m_RepOwnedMine;
-        uint32 m_RepSurviveCaptain;
-        uint32 m_RepSurviveTower;
+    uint32 m_HonorMapComplete;
+    uint32 m_RepTowerDestruction;
+    uint32 m_RepCaptain;
+    uint32 m_RepBoss;
+    uint32 m_RepOwnedGrave;
+    uint32 m_RepOwnedMine;
+    uint32 m_RepSurviveCaptain;
+    uint32 m_RepSurviveTower;
 };
 
 #endif
