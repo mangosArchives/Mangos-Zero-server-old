@@ -26,7 +26,7 @@
 
 /** FactoryHolder holds a factory object of a specific type
  */
-template<class T, class Key = std::string>
+template < class T, class Key = std::string >
 class MANGOS_DLL_DECL FactoryHolder
 {
 public:
@@ -41,7 +41,7 @@ public:
     void DeregisterSelf(void) { FactoryHolderRepository::Instance().RemoveItem(this, false); }
 
     /// Abstract Factory create method
-    virtual T* Create(void *data = NULL) const = 0;
+    virtual T* Create(void* data = NULL) const = 0;
 private:
     Key i_key;
 };
@@ -55,6 +55,6 @@ class Permissible
 {
 public:
     virtual ~Permissible() {}
-    virtual int Permit(const T *) const = 0;
+    virtual int Permit(const T*) const = 0;
 };
 #endif

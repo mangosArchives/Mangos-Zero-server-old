@@ -60,8 +60,8 @@ public:
 private:
 
     TimeTracker i_timer;
-    uint16 i_unloadActiveLockCount : 16;                    // lock from active object spawn points (prevent clone loading)
-    bool i_unloadExplicitLock      : 1;                     // explicit manual lock or config setting
+    uint16 i_unloadActiveLockCount : 16;                // lock from active object spawn points (prevent clone loading)
+    bool i_unloadExplicitLock      : 1;                 // explicit manual lock or config setting
 };
 
 typedef enum
@@ -131,19 +131,19 @@ public:
     void UpdateTimeTracker(time_t diff) { i_GridInfo.UpdateTimeTracker(diff); }
 
     template<class SPECIFIC_OBJECT>
-    void AddWorldObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
+    void AddWorldObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT* obj)
     {
         getGridType(x, y).AddWorldObject(obj);
     }
 
     template<class SPECIFIC_OBJECT>
-    void RemoveWorldObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
+    void RemoveWorldObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT* obj)
     {
         getGridType(x, y).RemoveWorldObject(obj);
     }
 
     template<class T, class TT>
-    void Visit(TypeContainerVisitor<T, TypeMapContainer<TT> > &visitor)
+    void Visit(TypeContainerVisitor<T, TypeMapContainer<TT> >& visitor)
     {
         for (uint32 x = 0; x < N; ++x)
             for (uint32 y = 0; y < N; ++y)
@@ -151,7 +151,7 @@ public:
     }
 
     template<class T, class TT>
-    void Visit(const uint32 &x, const uint32 &y, TypeContainerVisitor<T, TypeMapContainer<TT> > &visitor)
+    void Visit(const uint32& x, const uint32& y, TypeContainerVisitor<T, TypeMapContainer<TT> >& visitor)
     {
         getGridType(x, y).Visit(visitor);
     }
@@ -167,13 +167,13 @@ public:
     }
 
     template<class SPECIFIC_OBJECT>
-    bool AddGridObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
+    bool AddGridObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT* obj)
     {
         return getGridType(x, y).AddGridObject(obj);
     }
 
     template<class SPECIFIC_OBJECT>
-    bool RemoveGridObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT *obj)
+    bool RemoveGridObject(const uint32 x, const uint32 y, SPECIFIC_OBJECT* obj)
     {
         return getGridType(x, y).RemoveGridObject(obj);
     }

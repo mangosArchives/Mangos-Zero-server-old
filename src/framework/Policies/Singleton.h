@@ -59,7 +59,7 @@ namespace MaNGOS
 
         // data structure
         typedef typename ThreadingModel::Lock Guard;
-        static T *si_instance;
+        static T* si_instance;
         static bool si_destroyed;
     };
 }

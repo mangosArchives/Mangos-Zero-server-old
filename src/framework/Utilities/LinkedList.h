@@ -42,14 +42,14 @@ public:
     bool hasPrev() const  { return (iPrev->iPrev != NULL); }
     bool isInList() const { return (iNext != NULL && iPrev != NULL); }
 
-    LinkedListElement      * next()       { return hasNext() ? iNext : NULL; }
+    LinkedListElement*       next()       { return hasNext() ? iNext : NULL; }
     LinkedListElement const* next() const { return hasNext() ? iNext : NULL; }
-    LinkedListElement      * prev()       { return hasPrev() ? iPrev : NULL; }
+    LinkedListElement*       prev()       { return hasPrev() ? iPrev : NULL; }
     LinkedListElement const* prev() const { return hasPrev() ? iPrev : NULL; }
 
-    LinkedListElement      * nocheck_next()       { return iNext; }
+    LinkedListElement*       nocheck_next()       { return iNext; }
     LinkedListElement const* nocheck_next() const { return iNext; }
-    LinkedListElement      * nocheck_prev()       { return iPrev; }
+    LinkedListElement*       nocheck_prev()       { return iPrev; }
     LinkedListElement const* nocheck_prev() const { return iPrev; }
 
     void delink()
@@ -103,10 +103,10 @@ public:
 
     bool isEmpty() const { return (!iFirst.iNext->isInList()); }
 
-    LinkedListElement      * getFirst()       { return (isEmpty() ? NULL : iFirst.iNext); }
+    LinkedListElement*       getFirst()       { return (isEmpty() ? NULL : iFirst.iNext); }
     LinkedListElement const* getFirst() const { return (isEmpty() ? NULL : iFirst.iNext); }
 
-    LinkedListElement      * getLast()        { return (isEmpty() ? NULL : iLast.iPrev); }
+    LinkedListElement*       getLast()        { return (isEmpty() ? NULL : iLast.iPrev); }
     LinkedListElement const* getLast() const  { return (isEmpty() ? NULL : iLast.iPrev); }
 
     void insertFirst(LinkedListElement* pElem)
@@ -168,12 +168,12 @@ public:
             // construct with node pointer _Pnode
         }
 
-        Iterator& operator=(Iterator const &_Right)
+        Iterator& operator=(Iterator const& _Right)
         {
             return (*this) = _Right._Ptr;
         }
 
-        Iterator& operator=(const_pointer const &_Right)
+        Iterator& operator=(const_pointer const& _Right)
         {
             _Ptr = (pointer)_Right;
             return (*this);
@@ -221,25 +221,25 @@ public:
             return (_Tmp);
         }
 
-        bool operator==(Iterator const &_Right) const
+        bool operator==(Iterator const& _Right) const
         {
             // test for iterator equality
             return (_Ptr == _Right._Ptr);
         }
 
-        bool operator!=(Iterator const &_Right) const
+        bool operator!=(Iterator const& _Right) const
         {
             // test for iterator inequality
             return (!(*this == _Right));
         }
 
-        bool operator==(pointer const &_Right) const
+        bool operator==(pointer const& _Right) const
         {
             // test for pointer equality
             return (_Ptr != _Right);
         }
 
-        bool operator!=(pointer const &_Right) const
+        bool operator!=(pointer const& _Right) const
         {
             // test for pointer equality
             return (!(*this == _Right));

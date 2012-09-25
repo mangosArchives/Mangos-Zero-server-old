@@ -29,11 +29,11 @@
 
 /** ObjectRegistry holds all registry item of the same type
  */
-template<class T, class Key = std::string>
+template < class T, class Key = std::string >
 class MANGOS_DLL_DECL ObjectRegistry
 {
 public:
-    typedef std::map<Key, T *> RegistryMapType;
+    typedef std::map<Key, T*> RegistryMapType;
 
     /// Returns a registry item
     const T* GetRegistryItem(Key key) const
@@ -43,7 +43,7 @@ public:
     }
 
     /// Inserts a registry item
-    bool InsertItem(T *obj, Key key, bool replace = false)
+    bool InsertItem(T* obj, Key key, bool replace = false)
     {
         typename RegistryMapType::iterator iter = i_registeredObjects.find(key);
         if (iter != i_registeredObjects.end())
@@ -77,7 +77,7 @@ public:
     }
 
     /// Inefficiently return a vector of registered items
-    unsigned int GetRegisteredItems(std::vector<Key> &l) const
+    unsigned int GetRegisteredItems(std::vector<Key>& l) const
     {
         unsigned int sz = l.size();
         l.resize(sz + i_registeredObjects.size());
@@ -87,7 +87,7 @@ public:
     }
 
     /// Return the map of registered items
-    RegistryMapType const &GetRegisteredItems() const
+    RegistryMapType const& GetRegisteredItems() const
     {
         return i_registeredObjects;
     }

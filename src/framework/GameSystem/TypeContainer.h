@@ -50,7 +50,7 @@ struct ContainerUnorderedMap< TypeList<H, T>, KEY_TYPE >
     ContainerUnorderedMap<T, KEY_TYPE> _TailElements;
 };
 
-template<class OBJECT_TYPES, class KEY_TYPE = OBJECT_HANDLE>
+template < class OBJECT_TYPES, class KEY_TYPE = OBJECT_HANDLE >
 class TypeUnorderedMapContainer
 {
 public:
@@ -215,7 +215,7 @@ public:
 
     /// inserts a specific object into the container
     template<class SPECIFIC_TYPE>
-    bool insert(SPECIFIC_TYPE *obj)
+    bool insert(SPECIFIC_TYPE* obj)
     {
         SPECIFIC_TYPE* t = MaNGOS::Insert(i_elements, obj);
         return (t != NULL);
@@ -229,8 +229,8 @@ public:
         return (t != NULL);
     }
 
-    ContainerMapList<OBJECT_TYPES> & GetElements() { return i_elements; }
-    const ContainerMapList<OBJECT_TYPES> & GetElements() const { return i_elements;}
+    ContainerMapList<OBJECT_TYPES>& GetElements() { return i_elements; }
+    const ContainerMapList<OBJECT_TYPES>& GetElements() const { return i_elements;}
 
 private:
 

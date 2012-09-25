@@ -37,7 +37,7 @@ namespace MaNGOS
             return (new T);
         }
 
-        static void Destroy(T *obj)
+        static void Destroy(T* obj)
         {
             delete obj;
         }
@@ -72,7 +72,7 @@ namespace MaNGOS
             return new(&si_localStatic) T;
         }
 
-        static void Destroy(T *obj)
+        static void Destroy(T* obj)
         {
             obj->~T();
         }
@@ -115,7 +115,7 @@ namespace MaNGOS
             return CALL_BACK::createCallBack();
         }
 
-        static void Destroy(T *p)
+        static void Destroy(T* p)
         {
             CALL_BACK::destroyCallBack(p);
         }
