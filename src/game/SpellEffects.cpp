@@ -3536,6 +3536,16 @@ void Spell::EffectScriptEffect(SpellEffectIndex eff_idx)
                     unitTarget->CastSpell(unitTarget, 27699, true);
                     return;
                 }
+                case 28374:                                 // Decimate (Naxxramas: Gluth)
+                {
+                    if (!unitTarget)
+                        return;
+
+                    int32 damage = unitTarget->GetHealth() - unitTarget->GetMaxHealth() * 0.05f;
+                    if (damage > 0)
+                        m_caster->CastCustomSpell(unitTarget, 28375, &damage, NULL, NULL, true);
+                    return;
+                }
                 case 28560:                                 // Summon Blizzard
                 {
                     m_caster->CastSpell(m_caster, 28561, true);
