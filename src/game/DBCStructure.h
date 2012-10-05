@@ -690,6 +690,11 @@ private:
     SpellEntry(SpellEntry const&);                      // DON'T must have implementation
 };
 
+// A few fields which are required for automated convertion
+// NOTE that these fields are count by _skipping_ the fields that are unused!
+#define LOADED_SPELLDBC_FIELD_POS_EQUIPPED_ITEM_CLASS  57   // Must be converted to -1
+#define LOADED_SPELLDBC_FIELD_POS_SPELLNAME_0          117  // Links to "MaNGOS server-side spell"
+
 struct SpellCastTimesEntry
 {
     uint32    ID;                                           // 0        m_ID
