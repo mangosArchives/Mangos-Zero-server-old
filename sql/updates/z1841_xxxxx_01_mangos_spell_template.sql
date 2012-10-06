@@ -1,4 +1,4 @@
-ALTER TABLE db_version CHANGE COLUMN equired_z1840_xxxxx_01_mangos_creature_template required_z1841_xxxxx_01_mangos_spell_template bit;
+ALTER TABLE db_version CHANGE COLUMN required_z1840_xxxxx_01_mangos_creature_template required_z1841_xxxxx_01_mangos_spell_template bit;
 
 DROP TABLE IF EXISTS `spell_template`;
 CREATE TABLE `spell_template` (
