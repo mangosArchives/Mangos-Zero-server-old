@@ -400,11 +400,14 @@ void Spell::FillTargetMap()
         // but need it support in some know cases
         switch (m_spellInfo->EffectImplicitTargetA[i])
         {
-            case 0:
+            case TARGET_NONE:
                 switch (m_spellInfo->EffectImplicitTargetB[i])
                 {
-                    case 0:
-                        SetTargetMap(SpellEffectIndex(i), TARGET_EFFECT_SELECT, tmpUnitMap);
+                    case TARGET_NONE:
+                        if (m_caster->GetObjectGuid().IsPet())
+                            SetTargetMap(SpellEffectIndex(i), TARGET_SELF, tmpUnitMap);
+                        else
+                            SetTargetMap(SpellEffectIndex(i), TARGET_EFFECT_SELECT, tmpUnitMap);
                         break;
                     default:
                         SetTargetMap(SpellEffectIndex(i), m_spellInfo->EffectImplicitTargetB[i], tmpUnitMap);
@@ -414,7 +417,7 @@ void Spell::FillTargetMap()
             case TARGET_SELF:
                 switch (m_spellInfo->EffectImplicitTargetB[i])
                 {
-                    case 0:
+                    case TARGET_NONE:
                         // Arcane Missiles have strange targeting for auras
                         if (m_spellInfo->SpellFamilyName == SPELLFAMILY_MAGE && m_spellInfo->SpellFamilyFlags & UI64LIT(0x00000800))
                         {
@@ -443,7 +446,7 @@ void Spell::FillTargetMap()
             case TARGET_EFFECT_SELECT:
                 switch (m_spellInfo->EffectImplicitTargetB[i])
                 {
-                    case 0:
+                    case TARGET_NONE:
                     case TARGET_EFFECT_SELECT:
                         SetTargetMap(SpellEffectIndex(i), m_spellInfo->EffectImplicitTargetA[i], tmpUnitMap);
                         break;
@@ -1113,7 +1116,7 @@ void Spell::DoSpellHitOnUnit(Unit *unit, uint32 effectMask, bool isReflected)
                     unit->SetStandState(UNIT_STAND_STATE_STAND);
 
                 if (!unit->isInCombat() && unit->GetTypeId() != TYPEID_PLAYER && ((Creature*)unit)->AI())
-                    ((Creature*)unit)->AI()->AttackedBy(realCaster);
+                    unit->AttackedBy(realCaster);
 
                 unit->AddThreat(realCaster);
                 unit->SetInCombatWith(realCaster);
@@ -1456,6 +1459,34 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
         default:
             break;
     }
+	
+    // custom radius cases
+    switch (m_spellInfo->SpellFamilyName)
+    {
+        case SPELLFAMILY_GENERIC:
+        {
+            switch (m_spellInfo->Id)
+            {
+                case 24811:                                 // Draw Spirit (Lethon)
+                {
+                    if (effIndex == EFFECT_INDEX_0)         // Copy range from EFF_1 to 0
+                        radius = GetSpellRadius(sSpellRadiusStore.LookupEntry(m_spellInfo->EffectRadiusIndex[EFFECT_INDEX_1]));
+                    break;
+                }
+                case 28241:                                 // Poison (Naxxramas, Grobbulus Cloud)
+                {
+                    if (SpellAuraHolder* auraHolder = m_caster->GetSpellAuraHolder(28158))
+                        radius = 0.5f * (60000 - auraHolder->GetAuraDuration()) * 0.001f;
+                    break;
+                }
+                default:
+                    break;
+            }
+            break;
+        }
+        default:
+            break;
+    }
 
     switch (targetMode)
     {
@@ -1463,6 +1494,27 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
         case TARGET_TOTEM_WATER:
         case TARGET_TOTEM_AIR:
         case TARGET_TOTEM_FIRE:
+		{
+            float angle = m_caster->GetOrientation();
+            switch (targetMode)
+            {
+                case TARGET_TOTEM_EARTH:                         break;
+                case TARGET_TOTEM_WATER: angle += M_PI_F;        break;
+                case TARGET_TOTEM_AIR:   angle += M_PI_F * 0.5f; break;
+                case TARGET_TOTEM_FIRE:  angle += M_PI_F * 1.5f; break;
+            }
+
+            float x, y;
+            float z = m_caster->GetPositionZ();
+            // Ignore the BOUNDING_RADIUS for spells with radius (add a small value to prevent < 0 rounding errors)
+            m_caster->GetNearPoint2D(x, y, radius > 0.001f ? radius - m_caster->GetObjectBoundingRadius() + 0.01f : 2.0f, angle);
+            m_caster->UpdateAllowedPositionZ(x, y, z);
+            m_targets.setDestination(x, y, z);
+
+            // Add Summoner
+            targetUnitMap.push_back(m_caster);
+            break;
+        }
         case TARGET_SELF:
             targetUnitMap.push_back(m_caster);
             break;
@@ -1916,8 +1968,13 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
             break;
         case TARGET_IN_FRONT_OF_CASTER:
         {
-            bool inFront = m_spellInfo->SpellVisual != 3879;
-            FillAreaTargets(targetUnitMap, radius, inFront ? PUSH_IN_FRONT : PUSH_IN_BACK, SPELL_TARGETS_AOE_DAMAGE);
+            SpellNotifyPushType pushType = PUSH_IN_FRONT;
+            switch (m_spellInfo->SpellVisual)            // Some spell require a different target fill
+            {
+                case 3879: pushType = PUSH_IN_BACK;     break;
+                case 7441: pushType = PUSH_IN_FRONT_15; break;
+            }
+            FillAreaTargets(targetUnitMap, radius, pushType, SPELL_TARGETS_AOE_DAMAGE);
             break;
         }
         case TARGET_LARGE_FRONTAL_CONE:
@@ -3880,13 +3937,16 @@ SpellCastResult Spell::CheckCast(bool strict)
         {
             if (m_spellInfo->EffectImplicitTargetA[j] == TARGET_PET)
             {
-                if (!m_caster->GetPet())
+                Pet* pet = m_caster->GetPet();
+                if (!pet)
                 {
                     if (m_triggeredByAuraSpell)             // not report pet not existence for triggered spells
                         return SPELL_FAILED_DONT_REPORT;
                     else
                         return SPELL_FAILED_NO_PET;
                 }
+                else if (!pet->isAlive())
+                    return SPELL_FAILED_TARGETS_DEAD;
                 break;
             }
         }

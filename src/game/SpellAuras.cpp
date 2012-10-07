@@ -44,6 +44,7 @@
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
 #include "CellImpl.h"
+#include "MapManager.h"
 
 #define NULL_AURA_SLOT 0xFF
 
@@ -908,8 +909,22 @@ void Aura::TriggerSpell()
 //                    case 23792: break;
 //                    // Axe Flurry
 //                    case 24018: break;
-//                    // Mark of Arlokk
-//                    case 24210: break;
+                    case 24210:                             // Mark of Arlokk
+                    {
+                        // Replacement for (classic) spell 24211 (doesn't exist anymore)
+                        std::list<Creature*> lList;
+
+                        // Search for all Zulian Prowler in range
+                        MaNGOS::AllCreaturesOfEntryInRangeCheck check(triggerTarget, 15101, 15.0f);
+                        MaNGOS::CreatureListSearcher<MaNGOS::AllCreaturesOfEntryInRangeCheck> searcher(lList, check);
+                        Cell::VisitGridObjects(triggerTarget, searcher, 15.0f);
+
+                        for (std::list<Creature*>::const_iterator itr = lList.begin(); itr != lList.end(); ++itr)
+                            if ((*itr)->isAlive())
+                                (*itr)->AddThreat(triggerTarget, float(5000));
+
+                        return;
+                    }
 //                    // Restoration
 //                    case 24379: break;
 //                    // Happy Pet
@@ -947,10 +962,23 @@ void Aura::TriggerSpell()
                     }
 //                    // Pain Spike
 //                    case 25572: break;
-//                    // Rotate 360
-//                    case 26009: break;
-//                    // Rotate -360
-//                    case 26136: break;
+                    case 26009:                             // Rotate 360
+                    case 26136:                             // Rotate -360
+                    {
+                        float newAngle = target->GetOrientation();
+
+                        if (auraId == 26009)
+                            newAngle += M_PI_F/40;
+                        else
+                            newAngle -= M_PI_F/40;
+
+                        MapManager::NormalizeOrientation(newAngle);
+
+                        target->SetFacingTo(newAngle);
+
+                        target->CastSpell(target, 26029, true);
+                        return;
+                    }
 //                    // Consume
 //                    case 26196: break;
 //                    // Berserk
@@ -971,8 +999,15 @@ void Aura::TriggerSpell()
                         triggerTarget->CastCustomSpell(triggerTarget, 29879, &bpDamage, NULL, NULL, true, NULL, this, casterGUID);
                         return;
                     }
-//                    // Detonate Mana
-//                    case 27819: break;
+                    // Detonate Mana
+                    case 27819:
+                    {
+                        // value of 50% of mana is burnt in 1.12 as in wotlk heroic mode
+                        int32 bpDamage = (int32)triggerTarget->GetPower(POWER_MANA) * 0.5f;
+                        triggerTarget->ModifyPower(POWER_MANA, -bpDamage);
+                        triggerTarget->CastCustomSpell(triggerTarget, 27820, &bpDamage, NULL, NULL, true, NULL, this, triggerTarget->GetObjectGuid());
+                        return;
+                    }
 //                    // Controller Timer
 //                    case 28095: break;
                     // Stalagg Chain and Feugen Chain
@@ -1302,6 +1337,30 @@ void Aura::HandleAuraDummy(bool apply, bool Real)
                         if (Unit* caster = GetCaster())
                             caster->CastSpell(caster, 13138, true, NULL, this);
                         return;
+                    case 28832:                             // Mark of Korth'azz
+                    case 28833:                             // Mark of Blaumeux
+                    case 28834:                             // Mark of Rivendare
+                    case 28835:                             // Mark of Zeliek
+                    {
+                        int32 damage = 0;
+
+                        switch (GetStackAmount())
+                        {
+                            case 1:
+                                return;
+                            case 2: damage =   500; break;
+                            case 3: damage =  1500; break;
+                            case 4: damage =  4000; break;
+                            case 5: damage = 12500; break;
+                            default:
+                                damage = 14000 + 1000 * GetStackAmount();
+                                break;
+                        }
+
+                        if (Unit* caster = GetCaster())
+                            caster->CastCustomSpell(target, 28836, &damage, NULL, NULL, true, NULL, this);
+                        return;
+                    }
                 }
                 break;
             }
@@ -2239,8 +2298,7 @@ void Aura::HandleModPossess(bool apply, bool Real)
         {
             ((Creature*)target)->AIM_Initialize();
 
-            if (((Creature*)target)->AI())
-                ((Creature*)target)->AI()->AttackedBy(caster);
+            target->AttackedBy(caster);
         }
     }
 }
@@ -2424,8 +2482,7 @@ void Aura::HandleModCharm(bool apply, bool Real)
         if (target->GetTypeId() == TYPEID_UNIT)
         {
             ((Creature*)target)->AIM_Initialize();
-            if (((Creature*)target)->AI())
-                ((Creature*)target)->AI()->AttackedBy(caster);
+            target->AttackedBy(caster);
         }
     }
 }
@@ -4648,6 +4705,18 @@ void Aura::PeriodicTick()
             {
                 int32 gain = pCaster->ModifyPower(power, gain_amount);
                 target->AddThreat(pCaster, float(gain) * 0.5f, false, GetSpellSchoolMask(spellProto), spellProto);
+            }
+
+            // Some special cases
+            switch (GetId())
+            {
+                case 21056:                                 // Mark of Kazzak
+                    if (target->GetTypeId() == TYPEID_PLAYER && target->GetPower(power) == 0)
+                    {
+                        target->CastSpell(target, 21058, true, NULL, this);
+                        target->RemoveAurasDueToSpell(GetId());
+                    }
+                    break;
             }
             break;
         }
