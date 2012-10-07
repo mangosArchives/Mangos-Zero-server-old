@@ -176,6 +176,18 @@ void Totem::SetTypeBySummonSpell(SpellEntry const * spellProto)
 
 bool Totem::IsImmuneToSpellEffect(SpellEntry const* spellInfo, SpellEffectIndex index) const
 {
+    // Check for Mana Spring & Healing Stream totems
+    switch (spellInfo->SpellFamilyName)
+    {
+        case SPELLFAMILY_SHAMAN:
+            if (spellInfo->IsFitToFamilyMask(UI64LIT(0x00000002000)) ||
+                spellInfo->IsFitToFamilyMask(UI64LIT(0x00000004000)))
+                return false;
+            break;
+        default:
+            break;
+    }
+
     // TODO: possibly all negative auras immune?
     switch (spellInfo->Effect[index])
     {
