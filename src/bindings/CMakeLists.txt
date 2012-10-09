@@ -16,4 +16,4 @@
 
 # Uncomment once you have cloned https://github.com/mangos-zero/scriptdev0
 # into the scripts subdirectory.
-add_subdirectory(scripts)
+#add_subdirectory(scripts)
