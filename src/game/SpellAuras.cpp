@@ -929,21 +929,19 @@ void Aura::TriggerSpell()
 //                    case 24379: break;
 //                    // Happy Pet
 //                    case 24716: break;
-//                    // Dream Fog
-//                    case 24780: break;
 //                    // Cannon Prep
 //                    case 24832: break;
                     case 24834:                             // Shadow Bolt Whirl
                     {
                         uint32 spellForTick[8] = { 24820, 24821, 24822, 24823, 24835, 24836, 24837, 24838 };
-                        uint32 tick = GetAuraTicks();
+                        uint32 tick = GetAuraTicks() % 8;
                         if (tick < 8)
                         {
                             trigger_spell_id = spellForTick[tick];
 
                             // casted in left/right (but triggered spell have wide forward cone)
                             float forward = target->GetOrientation();
-                            float angle = target->GetOrientation() + (tick % 2 == 0 ? M_PI_F / 2 : - M_PI_F / 2);
+                            float angle = target->GetOrientation() - (tick * 2 * M_PI_F / 8);
                             target->SetOrientation(angle);
                             triggerTarget->CastSpell(triggerTarget, trigger_spell_id, true, NULL, this, casterGUID);
                             target->SetOrientation(forward);
