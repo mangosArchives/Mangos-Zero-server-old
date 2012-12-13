@@ -23,6 +23,34 @@
 #include "DBCStores.h"
 #include "ProgressBar.h"
 
+template <class T>
+inline void delete_null_entries(DBCStorage <T> storage, const char *table, const char *column) {
+    uint32 count = storage.GetNumRows();
+    std::ostringstream ss;
+    bool first = true;
+    
+    ss << "DELETE FROM " << table << " WHERE " << column << " IN (";
+    
+    /*get ranges*/
+    for (uint32 i = 0; i != count; i++) {
+        if (!storage.LookupEntry(i)) {
+            if (first) {
+                first = false;
+            } else {
+                ss << ',';
+            }
+            
+            ss << i;
+        }
+    }
+    
+    if (!first) {
+        ss << ')';
+        
+        CharacterDatabase.Execute(ss.str().c_str());
+    }
+}
+
 void CharacterDatabaseCleaner::CleanDatabase()
 {
     // config to disable
@@ -36,6 +64,7 @@ void CharacterDatabaseCleaner::CleanDatabase()
     if (!result)
         return;
     uint32 flags = (*result)[0].GetUInt32();
+    
     delete result;
 
     // clean up
@@ -46,64 +75,18 @@ void CharacterDatabaseCleaner::CleanDatabase()
     CharacterDatabase.Execute("UPDATE saved_variables SET cleaning_flags = 0");
 }
 
-void CharacterDatabaseCleaner::CheckUnique(const char* column, const char* table, bool (*check)(uint32))
-{
-    QueryResult* result = CharacterDatabase.PQuery("SELECT DISTINCT %s FROM %s", column, table);
-    if (!result)
-    {
-        sLog.outString("Table %s is empty.", table);
-        return;
-    }
-
-    bool found = false;
-    std::ostringstream ss;
-    BarGoLink bar(result->GetRowCount());
-    do
-    {
-        bar.step();
-
-        Field *fields = result->Fetch();
-
-        uint32 id = fields[0].GetUInt32();
-
-        if (!check(id))
-        {
-            if (!found)
-            {
-                ss << "DELETE FROM " << table << " WHERE " << column << " IN (";
-                found = true;
-            }
-            else
-                ss << ",";
-            ss << id;
-        }
-    }
-    while (result->NextRow());
-    delete result;
-
-    if (found)
-    {
-        ss << ")";
-        CharacterDatabase.Execute(ss.str().c_str());
-    }
-}
-
-bool CharacterDatabaseCleaner::SkillCheck(uint32 skill)
-{
-    return sSkillLineStore.LookupEntry(skill);
-}
-
 void CharacterDatabaseCleaner::CleanCharacterSkills()
 {
-    CheckUnique("skill", "character_skills", &SkillCheck);
-}
-
-bool CharacterDatabaseCleaner::SpellCheck(uint32 spell_id)
-{
-    return sSpellStore.LookupEntry(spell_id);
+    uint32 count = sSkillLineStore.GetNumRows();
+    delete_null_entries<SkillLineEntry>(sSkillLineStore, "character_skills", "skill");
+    
+    CharacterDatabase.PExecute("DELETE FROM character_skills WHERE skill >= %u", count);
 }
 
 void CharacterDatabaseCleaner::CleanCharacterSpell()
 {
-    CheckUnique("spell", "character_spell", &SpellCheck);
+    uint32 count = sSpellStore.GetNumRows();
+    delete_null_entries<SpellEntry>(sSpellStore, "character_spell", "spell");
+    
+    CharacterDatabase.PExecute("DELETE FROM character_spell WHERE spell >= %u", count);
 }
