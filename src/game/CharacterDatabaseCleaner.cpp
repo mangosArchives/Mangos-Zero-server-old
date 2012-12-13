@@ -23,6 +23,34 @@
 #include "DBCStores.h"
 #include "ProgressBar.h"
 
+template <class T>
+inline void delete_null_entries(DBCStorage <T> storage, const char *table, const char *column) {
+    uint32 count = storage.GetNumRows();
+    std::ostringstream ss;
+    bool first = true;
+    
+    ss << "DELETE FROM " << table << " WHERE " << column << " IN (";
+    
+    /*get ranges*/
+    for (uint32 i = 0; i != count; i++) {
+        if (!storage.LookupEntry(i)) {
+            if (first) {
+                first = false;
+            } else {
+                ss << ',';
+            }
+            
+            ss << i;
+        }
+    }
+    
+    if (!first) {
+        ss << ')';
+        
+        CharacterDatabase.Execute(ss.str().c_str());
+    }
+}
+
 void CharacterDatabaseCleaner::CleanDatabase()
 {
     // config to disable
@@ -36,6 +64,7 @@ void CharacterDatabaseCleaner::CleanDatabase()
     if (!result)
         return;
     uint32 flags = (*result)[0].GetUInt32();
+    
     delete result;
 
     // clean up
@@ -49,6 +78,7 @@ void CharacterDatabaseCleaner::CleanDatabase()
 void CharacterDatabaseCleaner::CleanCharacterSkills()
 {
     uint32 count = sSkillLineStore.GetNumRows();
+    delete_null_entries<SkillLineEntry>(sSkillLineStore, "character_skills", "skill");
     
     CharacterDatabase.PExecute("DELETE FROM character_skills WHERE skill >= %u", count);
 }
@@ -56,6 +86,7 @@ void CharacterDatabaseCleaner::CleanCharacterSkills()
 void CharacterDatabaseCleaner::CleanCharacterSpell()
 {
     uint32 count = sSpellStore.GetNumRows();
+    delete_null_entries<SpellEntry>(sSpellStore, "character_spell", "spell");
     
     CharacterDatabase.PExecute("DELETE FROM character_spell WHERE spell >= %u", count);
 }
