@@ -32,11 +32,6 @@ namespace CharacterDatabaseCleaner
 
     void CleanDatabase();
 
-    void CheckUnique(const char* column, const char* table, bool (*check)(uint32));
-
-    bool SkillCheck(uint32 skill);
-    bool SpellCheck(uint32 spell_id);
-
     void CleanCharacterSkills();
     void CleanCharacterSpell();
 }
